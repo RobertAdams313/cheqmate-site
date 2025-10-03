@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["VQ367Z66MN.com.RobAdams.PaycheckPlanner"],
+        "components": [
+          { "/": "/plaid/*" },
+          { "/": "/plaid/return-app*" }
+        ]
+      }
+    ]
+  }
+}
