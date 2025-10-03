@@ -1,4 +1,15 @@
 {
+  "rewrites": [
+    { "source": "/plaid/return", "destination": "/api/plaid-return" }
+  ],
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.cheqmateios.app" }],
+      "destination": "https://cheqmateios.app/$1",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/.well-known/apple-app-site-association",
