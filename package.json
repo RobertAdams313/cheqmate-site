@@ -19,5 +19,8 @@
   "homepage": "https://github.com/RobertAdams313/cheqmate-site#readme",
   "dependencies": {
     "plaid": "^39.0.0"
+  },
+  "devDependencies": {
+    "@vercel/node": "^5.3.24"
   }
 }
