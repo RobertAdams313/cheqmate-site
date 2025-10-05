@@ -1,52 +1,75 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { envFromFlags, baseUrlFor, credsFor } from '../lib/plaid-env';
+// /api/link-token.ts
+// Creates a Plaid Link token.
+// Supports both add-mode and update-mode (re-auth).
+//
+// POST body:
+//   { flow: "add" }
+//   { flow: "update", item_id: "ITEM_ID" }
+
+import type { VercelRequest, VercelResponse } from '@vercel/node'
+import fs from 'fs'
+import path from 'path'
+import { Configuration, PlaidApi, PlaidEnvironments, Products, CountryCode } from 'plaid'
+
+const env = process.env.PLAID_ENV ?? 'production'
+const redirectUri = process.env.PLAID_REDIRECT_URI ?? undefined
+const webhookUrl  = process.env.PLAID_WEBHOOK_URL ?? undefined
+
+const plaid = new PlaidApi(
+  new Configuration({
+    basePath: PlaidEnvironments[env as keyof typeof PlaidEnvironments],
+    baseOptions: {
+      headers: {
+        'PLAID-CLIENT-ID': process.env.PLAID_CLIENT_ID ?? '',
+        'PLAID-SECRET': process.env.PLAID_SECRET ?? '',
+      },
+    },
+  })
+)
+
+const tokensFile = path.join('/tmp', 'tokens.json')
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    const flow = String(req.body?.flow ?? 'add');                   // 'add' | 'update'
-    const accessToken: string | undefined = req.body?.access_token; // only for 'update'
-    const demo = req.body?.demo === true;                           // <- from iOS
-    const env = envFromFlags({ demo });
-    const base = baseUrlFor(env);
-    const { client_id, secret, redirect_uri } = credsFor(env);
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+    const { flow, item_id } = req.body ?? {}
 
-    const common: any = {
-      client_id,
-      secret,
+    if (flow === 'update') {
+      if (!item_id) return res.status(400).json({ error: 'Missing item_id for update' })
+      const tokens: Record<string,string> = fs.existsSync(tokensFile)
+        ? JSON.parse(fs.readFileSync(tokensFile, 'utf8'))
+        : {}
+      const access_token = tokens[item_id]
+      if (!access_token) return res.status(404).json({ error: 'No access_token for item_id' })
+
+      const resp = await plaid.linkTokenCreate({
+        client_name: 'CheqMate',
+        language: 'en',
+        country_codes: [CountryCode.Us],
+        user: { client_user_id: 'cheqmate-user' }, // replace with your real user id
+        access_token, // <-- update-mode
+        redirect_uri: redirectUri,
+        webhook: webhookUrl,
+      })
+
+      return res.status(200).json({ link_token: resp.data.link_token })
+    }
+
+    // Default: add flow
+    const resp = await plaid.linkTokenCreate({
       client_name: 'CheqMate',
       language: 'en',
-      country_codes: ['US'],
-    };
-    if (redirect_uri) common.redirect_uri = redirect_uri;
+      country_codes: [CountryCode.Us],
+      user: { client_user_id: 'cheqmate-user' }, // replace with your real user id
+      products: [Products.Transactions],
+      redirect_uri: redirectUri,
+      webhook: webhookUrl,
+    })
 
-    // Your earlier request-construction rule (pure add vs update)
-    let createReq: any;
-    if (flow === 'update') {
-      if (!accessToken) return res.status(400).json({ error: 'access_token is required for update mode' });
-      createReq = { ...common, access_token: accessToken };
-      console.log(`[Plaid link-token] mode=update env=${env} has_access_token=1`);
-    } else {
-      createReq = { ...common }; // NO access_token in pure add
-      console.log(`[Plaid link-token] mode=add env=${env} has_access_token=0`);
-    }
-
-    const r = await fetch(`${base}/link/token/create`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(createReq),
-    });
-
-    const text = await r.text();
-    if (r.status < 200 || r.status >= 300) {
-      console.error(`[Plaid link-token] HTTP ${r.status}: ${text}`);
-      return res.status(r.status).send(text);
-    }
-    const json = JSON.parse(text);
-    const token: string | undefined = json.link_token;
-    console.log(`[Plaid link-token] ok env=${env} token_prefix=${typeof token === 'string' ? token.split('-').slice(0,2).join('-')+'-' : 'n/a'}`);
-    return res.status(200).json({ link_token: token });
-  } catch (e: any) {
-    console.error('[Plaid link-token] error', e?.message || e);
-    return res.status(500).json({ error: 'internal_error' });
+    return res.status(200).json({ link_token: resp.data.link_token })
+  } catch (err: any) {
+    const status = err?.response?.status ?? 500
+    const data = err?.response?.data ?? { error: err?.message ?? 'unknown_error' }
+    return res.status(status).json(data)
   }
 }
