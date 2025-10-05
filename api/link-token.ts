@@ -40,6 +40,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const accessToken: string | undefined = req.body?.access_token;
 
     const common: any = {
+
+    // 👇 Inserted Plaid add/update enforcement logic
+    const flow = String(req.body?.flow ?? 'add');
+    const accessToken: string | undefined = req.body?.access_token;
+    const institutionId: string | undefined = req.body?.institution_id; // if caller ever sends it
+
+    let createReq: any;
+
+    if (flow === 'update') {
+      if (!accessToken) return res.status(400).json({ error: 'access_token is required for update mode' });
+      createReq = { ...common, access_token: accessToken };
+      console.log('[Plaid link-token] mode=update has_access_token=1 has_institution_id=0');
+    } else {
+      // ✅ Force pure add-mode: NO access_token, NO institution_id
+      createReq = { ...common };
+      console.log('[Plaid link-token] mode=add has_access_token=0 has_institution_id=0');
+    }
       client_id: CLIENT_ID,
       secret: SECRET,
       client_name: 'CheqMate',
