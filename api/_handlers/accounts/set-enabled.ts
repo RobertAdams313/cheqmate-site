@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { setItemEnabled } from '../_lib/storage';
+import { setItemEnabled } from ('../_lib/storage.js');
 
 export default async function setEnabled(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Content-Type', 'application/json');

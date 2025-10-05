@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
-import { readAccessToken, saveAccessToken, removeAccessToken } from '../_lib/storage';
+import { readAccessToken, saveAccessToken, removeAccessToken } from ('../_lib/storage.js');
 
 function env(k: string, f?: string) { return process.env[k] ?? f; }
 function plaidClient() {
