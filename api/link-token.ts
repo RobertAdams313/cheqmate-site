@@ -1,90 +1,52 @@
-// api/link-token.ts
-// Vercel serverless (Node) endpoint to create Plaid Link tokens.
-// - Honors env selection via ?env= / body.env / FORCE_PLAID_ENV (production default)
-// - Add-mode => institution picker (NO access_token, NO institution_id)
-// - Update-mode => requires access_token
-// - Defensive logging + clear 4xx/5xx errors
-
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-function resolveEnv(req: VercelRequest) {
-  const raw = (req.query?.env ?? req.body?.env ?? process.env.FORCE_PLAID_ENV ?? 'production').toString().toLowerCase();
-  return raw === 'sandbox' ? 'sandbox' : 'production';
-}
+import { envFromFlags, baseUrlFor, credsFor } from '../lib/plaid-env';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const which = resolveEnv(req);                       // 'production' | 'sandbox'
-  const isSandbox = which === 'sandbox';
-  const PLAID_BASE = isSandbox ? 'https://sandbox.plaid.com' : 'https://production.plaid.com';
-
-  const CLIENT_ID  = isSandbox ? process.env.PLAID_CLIENT_ID_SANDBOX   : process.env.PLAID_CLIENT_ID_PROD;
-  const SECRET     = isSandbox ? process.env.PLAID_SECRET_SANDBOX      : process.env.PLAID_SECRET_PROD;
-  const REDIRECT   = isSandbox ? process.env.PLAID_REDIRECT_URI_SANDBOX: process.env.PLAID_REDIRECT_URI_PROD;
-  const CLIENT_USER_ID = process.env.PLAID_CLIENT_USER_ID || 'cheqmate-user-1';
-
-  // Fail fast on missing env for the selected environment
-  const missing: string[] = [];
-  if (!CLIENT_ID) missing.push('client_id');
-  if (!SECRET) missing.push('secret');
-  if (!REDIRECT) missing.push('redirect_uri');
-  if (missing.length) {
-    console.error('[Plaid link-token] missing env for', which, missing);
-    return res.status(400).json({
-      error_code: 'MISSING_FIELDS',
-      error_message: `Missing required fields for ${which}: ${missing.join(', ')}`,
-    });
-  }
-
   try {
-    const flow = String(req.body?.flow ?? 'add');                    // 'add' | 'update'
-    const accessToken: string | undefined = req.body?.access_token;
-    // Note: we INTENTIONALLY ignore any institution_id for add-mode so the picker shows.
+    const flow = String(req.body?.flow ?? 'add');                   // 'add' | 'update'
+    const accessToken: string | undefined = req.body?.access_token; // only for 'update'
+    const demo = req.body?.demo === true;                           // <- from iOS
+    const env = envFromFlags({ demo });
+    const base = baseUrlFor(env);
+    const { client_id, secret, redirect_uri } = credsFor(env);
 
     const common: any = {
-      client_id: CLIENT_ID,
-      secret: SECRET,
+      client_id,
+      secret,
       client_name: 'CheqMate',
       language: 'en',
       country_codes: ['US'],
-      redirect_uri: REDIRECT,
-      user: { client_user_id: CLIENT_USER_ID },
-      products: ['transactions'],
     };
+    if (redirect_uri) common.redirect_uri = redirect_uri;
 
-    // 👇 Enforce mode explicitly
+    // Your earlier request-construction rule (pure add vs update)
     let createReq: any;
     if (flow === 'update') {
-      if (!accessToken) {
-        return res.status(400).json({ error: 'access_token is required for update mode' });
-      }
+      if (!accessToken) return res.status(400).json({ error: 'access_token is required for update mode' });
       createReq = { ...common, access_token: accessToken };
-      console.log('[Plaid link-token] mode=update env=%s has_access_token=1', which);
+      console.log(`[Plaid link-token] mode=update env=${env} has_access_token=1`);
     } else {
-      createReq = { ...common }; // ✅ pure add-mode
-      console.log('[Plaid link-token] mode=add env=%s has_access_token=0', which);
+      createReq = { ...common }; // NO access_token in pure add
+      console.log(`[Plaid link-token] mode=add env=${env} has_access_token=0`);
     }
 
-    // Create the link token
-    const r = await fetch(`${PLAID_BASE}/link/token/create`, {
+    const r = await fetch(`${base}/link/token/create`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(createReq),
     });
 
-    const json = await r.json().catch(() => ({} as any));
-    if (!r.ok) {
-      console.error('[Plaid link-token] Plaid error', which, r.status, json);
-      return res.status(r.status).json(json);
+    const text = await r.text();
+    if (r.status < 200 || r.status >= 300) {
+      console.error(`[Plaid link-token] HTTP ${r.status}: ${text}`);
+      return res.status(r.status).send(text);
     }
-
-    console.log('[Plaid link-token] ok env=%s token_prefix=%s', which, String(json.link_token).slice(0, 16));
-    return res.status(200).json({ link_token: json.link_token });
+    const json = JSON.parse(text);
+    const token: string | undefined = json.link_token;
+    console.log(`[Plaid link-token] ok env=${env} token_prefix=${typeof token === 'string' ? token.split('-').slice(0,2).join('-')+'-' : 'n/a'}`);
+    return res.status(200).json({ link_token: token });
   } catch (e: any) {
-    console.error('[Plaid link-token] handler failed:', e?.stack || e?.message || e);
-    return res.status(500).json({ error: 'FUNCTION_INVOCATION_FAILED' });
+    console.error('[Plaid link-token] error', e?.message || e);
+    return res.status(500).json({ error: 'internal_error' });
   }
 }
