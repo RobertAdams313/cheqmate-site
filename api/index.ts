@@ -7,6 +7,8 @@ type Handler = (req: VercelRequest, res: VercelResponse) => unknown | Promise<un
 
 // Use .js extensions; TS compiles to JS in Vercel.
 const map: Record<string, () => Promise<any>> = {
+  '/blob-write-test': () => import('./_handlers/blob-write-test.js'),
+  '/blob-debug': () => import('./_handlers/blob-debug.js'),
   // flat
   '/link-token':              () => import('./_handlers/link-token.js'),
   '/exchange-public-token':   () => import('./_handlers/exchange-public-token.js'),
