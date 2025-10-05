@@ -10,21 +10,21 @@ type Handler = (req: VercelRequest, res: VercelResponse) => unknown | Promise<un
 // serverless functions for each file in /api.
 const map: Record<string, () => Promise<{ default: Handler }>> = {
   // flat
-  '/link-token':              () => import('../api-handlers/link-token'),
-  '/exchange-public-token':   () => import('../api-handlers/exchange-public-token'),
-  '/transactions-get':        () => import('../api-handlers/transactions-get'),
-  '/transactions-sync':       () => import('../api-handlers/transactions/sync').catch(() => import('../api-handlers/transactions-sync')),
-  '/transactions/sync':       () => import('../api-handlers/transactions/sync').catch(() => import('../api-handlers/transactions-sync')),
-  '/sandbox-access-token':    () => import('../api-handlers/sandbox-access-token'),
-  '/ping':                    () => import('../api-handlers/ping'),
-  '/debug-plaid':             () => import('../api-handlers/debug-plaid'),
-  '/plaid/return':            () => import('../api-handlers/plaid-return'),
+  '/link-token':              () => import('./_handlers/link-token'),
+  '/exchange-public-token':   () => import('./_handlers/exchange-public-token'),
+  '/transactions-get':        () => import('./_handlers/transactions-get'),
+  '/transactions-sync':       () => import('./_handlers/transactions/sync').catch(() => import('./_handlers/transactions-sync')),
+  '/transactions/sync':       () => import('./_handlers/transactions/sync').catch(() => import('./_handlers/transactions-sync')),
+  '/sandbox-access-token':    () => import('./_handlers/sandbox-access-token'),
+  '/ping':                    () => import('./_handlers/ping'),
+  '/debug-plaid':             () => import('./_handlers/debug-plaid'),
+  '/plaid/return':            () => import('./_handlers/plaid-return'),
 
   // nested
-  '/accounts/set-enabled':    () => import('../api-handlers/accounts/set-enabled'),
-  '/items/list':              () => import('../api-handlers/items/list'),
-  '/item/remove':             () => import('../api-handlers/item/remove'),
-  '/recurring/list':          () => import('../api-handlers/recurring/list'),
+  '/accounts/set-enabled':    () => import('./_handlers/accounts/set-enabled'),
+  '/items/list':              () => import('./_handlers/items/list'),
+  '/item/remove':             () => import('./_handlers/item/remove'),
+  '/recurring/list':          () => import('./_handlers/recurring/list'),
 };
 
 // Normalizes incoming path and preserves old aliases.
