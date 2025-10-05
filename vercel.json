@@ -1,22 +1,5 @@
 {
-  "rewrites": [
-    { "source": "/plaid/return", "destination": "/api/plaid-return" }
-  ],
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [{ "type": "host", "value": "www.cheqmateios.app" }],
-      "destination": "https://cheqmateios.app/$1",
-      "permanent": true
-    }
-  ],
-  "headers": [
-    {
-      "source": "/.well-known/apple-app-site-association",
-      "headers": [
-        { "key": "Content-Type", "value": "application/json; charset=utf-8" },
-        { "key": "Cache-Control", "value": "public, max-age=300, must-revalidate" }
-      ]
-    }
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/index.ts" }
   ]
 }
