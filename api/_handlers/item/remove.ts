@@ -1,4 +1,29 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
+
+function env(k: string, f?: string) { return process.env[k] ?? f; }
+function plaidClient() {
+  const forced = (env('FORCE_PLAID_ENV', 'production') || 'production').toLowerCase();
+  const envName = forced === 'sandbox' ? 'sandbox'
+                : forced === 'development' ? 'development'
+                : 'production';
+
+  const configuration = new Configuration({
+    basePath: PlaidEnvironments[envName],
+    baseOptions: {
+      headers: {
+        'PLAID-CLIENT-ID': env('PLAID_CLIENT_ID_' + envName.toUpperCase(), process.env.PLAID_CLIENT_ID) as string,
+        'PLAID-SECRET': env('PLAID_SECRET_' + envName.toUpperCase(), process.env.PLAID_SECRET) as string,
+      },
+    },
+  });
+  return new PlaidApi(configuration);
+}
+
+// Implement this to resolve item_id -> access_token from your storage.
+async function resolveAccessTokenForItemId(_item_id: string): Promise<string | null> {
+  return null;
+}
 
 export default async function removeItem(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Content-Type', 'application/json');
@@ -6,15 +31,33 @@ export default async function removeItem(req: VercelRequest, res: VercelResponse
     res.status(405).json({ error: 'METHOD_NOT_ALLOWED' });
     return;
   }
+
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body ?? {});
-    const { item_id } = body;
-    if (!item_id) {
-      res.status(400).json({ error: 'BAD_REQUEST', message: 'Expected { item_id }' });
+    let { access_token, item_id } = body;
+
+    if (!access_token && item_id) {
+      access_token = await resolveAccessTokenForItemId(item_id);
+      if (!access_token) {
+        res.status(400).json({
+          error: 'BAD_REQUEST',
+          message: 'Provide access_token or implement item_id → access_token resolver',
+          item_id,
+        });
+        return;
+      }
+    }
+
+    if (!access_token) {
+      res.status(400).json({ error: 'BAD_REQUEST', message: 'Expected { access_token } or { item_id }' });
       return;
     }
-    res.status(200).json({ ok: true, item_id });
+
+    const client = plaidClient();
+    const out = await client.itemRemove({ access_token });
+    res.status(200).json({ ok: true, removed: true, request_id: out.data?.request_id });
   } catch (e: any) {
-    res.status(400).json({ error: 'BAD_JSON', message: e?.message ?? String(e) });
+    const err = e?.response?.data ?? e;
+    res.status(500).json({ error: 'ITEM_REMOVE_FAILED', detail: err });
   }
 }
