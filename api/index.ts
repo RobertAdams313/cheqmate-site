@@ -6,25 +6,28 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 type Handler = (req: VercelRequest, res: VercelResponse) => unknown | Promise<unknown>;
 
-// We import handlers from api-handlers/* so Vercel doesn't create extra
-// serverless functions for each file in /api.
+// IMPORTANT: Use .js extensions; TS compiles to JS in Vercel's runtime.
 const map: Record<string, () => Promise<{ default: Handler }>> = {
   // flat
-  '/link-token':              () => import('./_handlers/link-token'),
-  '/exchange-public-token':   () => import('./_handlers/exchange-public-token'),
-  '/transactions-get':        () => import('./_handlers/transactions-get'),
-  '/transactions-sync':       () => import('./_handlers/transactions/sync').catch(() => import('./_handlers/transactions-sync')),
-  '/transactions/sync':       () => import('./_handlers/transactions/sync').catch(() => import('./_handlers/transactions-sync')),
-  '/sandbox-access-token':    () => import('./_handlers/sandbox-access-token'),
-  '/ping':                    () => import('./_handlers/ping'),
-  '/debug-plaid':             () => import('./_handlers/debug-plaid'),
-  '/plaid/return':            () => import('./_handlers/plaid-return'),
+  '/link-token':              () => import('./_handlers/link-token.js'),
+  '/exchange-public-token':   () => import('./_handlers/exchange-public-token.js'),
+  '/transactions-get':        () => import('./_handlers/transactions-get.js'),
+  '/transactions-sync':       () => import('./_handlers/transactions/sync.js')
+                                   .catch(() => import('./_handlers/transactions-sync.js')),
+  '/transactions/sync':       () => import('./_handlers/transactions/sync.js')
+                                   .catch(() => import('./_handlers/transactions-sync.js')),
+  '/sandbox-access-token':    () => import('./_handlers/sandbox-access-token.js'),
+  '/ping':                    () => import('./_handlers/ping.js'),
+  '/debug-plaid':             () => import('./_handlers/debug-plaid.js'),
 
   // nested
-  '/accounts/set-enabled':    () => import('./_handlers/accounts/set-enabled'),
-  '/items/list':              () => import('./_handlers/items/list'),
-  '/item/remove':             () => import('./_handlers/item/remove'),
-  '/recurring/list':          () => import('./_handlers/recurring/list'),
+  '/accounts/set-enabled':    () => import('./_handlers/accounts/set-enabled.js'),
+  '/items/list':              () => import('./_handlers/items/list.js'),
+  '/item/remove':             () => import('./_handlers/item/remove.js'),
+  '/recurring/list':          () => import('./_handlers/recurring/list.js'),
+
+  // non-API rewrite (if configured in vercel.json)
+  '/plaid/return':            () => import('./_handlers/plaid-return.js'),
 };
 
 // Normalizes incoming path and preserves old aliases.
@@ -49,7 +52,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const mod = await loader();
-    // Ensure JSON by default; individual handlers can override.
     res.setHeader('Content-Type', 'application/json');
     return mod.default(req, res);
   } catch (err: any) {
