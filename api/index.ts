@@ -18,6 +18,7 @@ const map: Record<string, () => Promise<{ default: Handler }>> = {
   '/sandbox-access-token':    () => import('../api-handlers/sandbox-access-token'),
   '/ping':                    () => import('../api-handlers/ping'),
   '/debug-plaid':             () => import('../api-handlers/debug-plaid'),
+  '/plaid/return':            () => import('../api-handlers/plaid-return'),
 
   // nested
   '/accounts/set-enabled':    () => import('../api-handlers/accounts/set-enabled'),
