@@ -1,39 +1,48 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { envFromFlags, baseUrlFor, credsFor } from '../lib/plaid-env';
+import { plaidClient } from '../_lib/plaid';
+import { saveTokenBundle, writeItemMeta } from '../_lib/secure-storage';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  res.setHeader('Content-Type','application/json');
+
+  if (req.method !== 'POST') {
+    res.status(405).json({ error: 'METHOD_NOT_ALLOWED' });
+    return;
+  }
+
   try {
-    const public_token: string | undefined = req.body?.public_token;
-    if (!public_token) return res.status(400).json({ error: 'public_token is required' });
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body ?? {});
+    const public_token = body?.public_token;
+    if (!public_token || typeof public_token !== 'string') {
+      res.status(400).json({ error: 'BAD_REQUEST', message: 'Expected { public_token }' });
+      return;
+    }
 
-    const env = envFromFlags({ token: public_token });
-    const base = baseUrlFor(env);
-    const { client_id, secret } = credsFor(env);
+    const client = plaidClient();
+    const exchange = await client.itemPublicTokenExchange({ public_token });
+    const access_token = exchange.data.access_token;
+    const item_id = exchange.data.item_id;
 
-    const body = { client_id, secret, public_token };
+    // Initialize sync cursor as null on first exchange
+    const last_cursor: string | null = null;
 
-    const r = await fetch(`${base}/item/public_token/exchange`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+    // Persist sensitive bundle encrypted (token + cursor)
+    const tokenOut = await saveTokenBundle(item_id, access_token, last_cursor);
+
+    // Persist non-sensitive metadata for UI (public)
+    await writeItemMeta(item_id, {
+      last_cursor,          // null initially (safe, but you can remove if you prefer)
+      status: 'HEALTHY',    // default status on fresh exchange
     });
 
-    const text = await r.text();
-    if (r.status < 200 || r.status >= 300) {
-      console.error(`[Plaid exchange] HTTP ${r.status}: ${text}`);
-      return res.status(r.status).send(text);
-    }
-    const json = JSON.parse(text);
-    // normalize for your iOS client
-    const exchange = {
-      item_id: json.item_id,
-      access_token: json.access_token,
-      request_id: json.request_id,
-    };
-    console.log(`[Plaid exchange] ok env=${env} item_id=${exchange.item_id}`);
-    return res.status(200).json(exchange);
-  } catch (e: any) {
-    console.error('[Plaid exchange] error', e?.message || e);
-    return res.status(500).json({ error: 'internal_error' });
+    res.status(200).json({
+      ok: true,
+      item_id,
+      // DO NOT return access_token in API response
+      stored: { tokenKey: tokenOut.tokenKey }
+    });
+  } catch (e:any) {
+    const err = e?.response?.data ?? e;
+    res.status(500).json({ error: 'EXCHANGE_FAILED', detail: err });
   }
 }
