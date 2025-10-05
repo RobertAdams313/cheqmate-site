@@ -1,4 +1,4 @@
-import { get, put, del, head } from '@vercel/blob';
+import { get, put, del } from '@vercel/blob';
 
 const BUCKET_PREFIX = 'cheqmate';
 
@@ -11,14 +11,19 @@ function getToken(): string {
 async function readJSON<T>(key: string): Promise<T | null> {
   const token = getToken();
   const fullKey = `${BUCKET_PREFIX}/${key}`;
-
-  const exists = await head(fullKey, { token }).catch(() => null);
-  if (!exists) return null;
-
-  const file = await get(fullKey, { token });
-  const text = await (file as any)?.blob?.text?.();
-  if (!text) return null;
-  return JSON.parse(text) as T;
+  try {
+    const file = await get(fullKey, { token });
+    // In some runtimes, get() may return undefined if not found
+    if (!file || !(file as any).blob) return null;
+    const text = await (file as any).blob.text();
+    return text ? (JSON.parse(text) as T) : null;
+  } catch (err: any) {
+    // Treat missing blob as null
+    const msg = String(err?.message ?? err);
+    if (/Not Found|404/i.test(msg)) return null;
+    // Surface other errors
+    throw err;
+  }
 }
 
 async function writeJSON(key: string, value: unknown): Promise<void> {
