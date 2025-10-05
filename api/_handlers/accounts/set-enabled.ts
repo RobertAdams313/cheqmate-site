@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { setItemEnabled } from '../_lib/storage';
 
 export default async function setEnabled(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Content-Type', 'application/json');
@@ -16,16 +17,9 @@ export default async function setEnabled(req: VercelRequest, res: VercelResponse
       return;
     }
 
-    // TODO: Persist the enabled flag for item_id in your storage.
-    // e.g., await itemsStore.setEnabled(item_id, enabled)
-
-    res.status(501).json({
-      error: 'NOT_IMPLEMENTED',
-      message: 'Attach persistence layer to store enabled flag for item_id',
-      item_id,
-      enabled,
-    });
+    await setItemEnabled(item_id, enabled);
+    res.status(200).json({ ok: true, item_id, enabled });
   } catch (e: any) {
-    res.status(400).json({ error: 'BAD_JSON', message: e?.message ?? String(e) });
+    res.status(500).json({ error: 'SET_ENABLED_FAILED', message: e?.message ?? String(e) });
   }
 }

@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
+import { readAccessToken, saveAccessToken, removeAccessToken } from '../_lib/storage';
 
 function env(k: string, f?: string) { return process.env[k] ?? f; }
 function plaidClient() {
@@ -20,11 +21,6 @@ function plaidClient() {
   return new PlaidApi(configuration);
 }
 
-// Implement this to resolve item_id -> access_token from your storage.
-async function resolveAccessTokenForItemId(_item_id: string): Promise<string | null> {
-  return null;
-}
-
 export default async function removeItem(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method !== 'POST') {
@@ -36,18 +32,12 @@ export default async function removeItem(req: VercelRequest, res: VercelResponse
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body ?? {});
     let { access_token, item_id } = body;
 
-    if (!access_token && item_id) {
-      access_token = await resolveAccessTokenForItemId(item_id);
-      if (!access_token) {
-        res.status(400).json({
-          error: 'BAD_REQUEST',
-          message: 'Provide access_token or implement item_id → access_token resolver',
-          item_id,
-        });
-        return;
-      }
+    if (access_token && item_id) {
+      await saveAccessToken(item_id, access_token);
     }
-
+    if (!access_token && item_id) {
+      access_token = await readAccessToken(item_id);
+    }
     if (!access_token) {
       res.status(400).json({ error: 'BAD_REQUEST', message: 'Expected { access_token } or { item_id }' });
       return;
@@ -55,6 +45,11 @@ export default async function removeItem(req: VercelRequest, res: VercelResponse
 
     const client = plaidClient();
     const out = await client.itemRemove({ access_token });
+
+    if (item_id) {
+      await removeAccessToken(item_id).catch(() => {});
+    }
+
     res.status(200).json({ ok: true, removed: true, request_id: out.data?.request_id });
   } catch (e: any) {
     const err = e?.response?.data ?? e;
