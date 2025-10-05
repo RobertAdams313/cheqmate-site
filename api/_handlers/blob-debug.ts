@@ -6,7 +6,6 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
     hasToken: !!token,
     tokenKind: token.startsWith('vercel_blob_rw_') ? 'rw' : (token ? 'unknown' : null),
     tokenLength: token.length,
-    // mask for sanity (first 12 + last 4)
     tokenMasked: token ? token.slice(0, 12) + '...' + token.slice(-4) : null,
   });
 }
