@@ -1,0 +1,23 @@
+{
+  "name": "cheqmate-site",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RobertAdams313/cheqmate-site.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RobertAdams313/cheqmate-site/issues"
+  },
+  "homepage": "https://github.com/RobertAdams313/cheqmate-site#readme",
+  "dependencies": {
+    "plaid": "^39.0.0"
+  }
+}
