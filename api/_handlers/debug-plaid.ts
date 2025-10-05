@@ -1,8 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-function env(k: string) { return process.env[k]; }
-
-export default async function debugPlaid(req: VercelRequest, res: VercelResponse) {
+const env = (k: string) => process.env[k];
+export default async function debugPlaid(_req: VercelRequest, res: VercelResponse) {
   const forced = (env('FORCE_PLAID_ENV') || '').toLowerCase();
   const resolved_env =
     forced === 'sandbox' ? 'sandbox' :
@@ -21,7 +19,7 @@ export default async function debugPlaid(req: VercelRequest, res: VercelResponse
       PLAID_CLIENT_ID_SANDBOX: !!env('PLAID_CLIENT_ID_SANDBOX'),
       PLAID_SECRET_SANDBOX: !!env('PLAID_SECRET_SANDBOX'),
       PLAID_REDIRECT_URI_SANDBOX: !!env('PLAID_REDIRECT_URI_SANDBOX'),
-      FORCE_PLAID_ENV: env('FORCE_PLAID_ENV') || null,
+      FORCE_PLAID_ENV: env('FORCE_PLAID_ENV') || null
     }
   });
 }
