@@ -7,7 +7,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
     if (!token) throw new Error('No BLOB_READ_WRITE_TOKEN at runtime');
     const key = `cheqmate/debug/hello-${Date.now()}.json`;
     const r = await put(key, JSON.stringify({ ok:true, at:new Date().toISOString() }), {
-      token, contentType: 'application/json', access: 'private', addRandomSuffix: false
+      token, contentType: 'application/json', access: 'public', addRandomSuffix: false
     });
     res.status(200).json({ ok:true, key, size: (r as any)?.size ?? null });
   } catch (e:any) {

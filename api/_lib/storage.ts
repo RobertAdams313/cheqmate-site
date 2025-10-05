@@ -32,7 +32,7 @@ async function writeJSON(key: string, value: unknown): Promise<void> {
   await put(fullKey, JSON.stringify(value), {
     token,
     contentType: 'application/json',
-    access: 'private',
+    access: 'public',
     addRandomSuffix: false,
     // Some SDK versions support allowUpdate; otherwise same-key put overwrites.
     // @ts-ignore
