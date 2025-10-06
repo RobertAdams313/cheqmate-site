@@ -3,6 +3,7 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import debugEnv from './_handlers/debug-env';
+import debugEnv2 from './_handlers/debug-env2';
 
 type Handler = (req: VercelRequest, res: VercelResponse) => unknown | Promise<unknown>;
 
@@ -52,6 +53,13 @@ function resolveHandler(mod: any): Handler {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Debug v2: Plaid env/redirect + blob base
+  try {
+    const urlObj = new URL(req.url || '', 'https://local');
+    const pathname = urlObj.pathname.replace(/^\/api/, '');
+    if (pathname === '/debug-env2') { return await debugEnv2(req, res); }
+  } catch (_e) { /* noop */ }
+
   // Debug: Plaid env/redirect check
   try {
     const urlObj = new URL(req.url || '', 'https://local');
