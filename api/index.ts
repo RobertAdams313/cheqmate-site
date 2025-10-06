@@ -2,6 +2,7 @@
 // Single-entry router (works with ESM *and* CommonJS handlers)
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import debugEnv from './_handlers/debug-env';
 
 type Handler = (req: VercelRequest, res: VercelResponse) => unknown | Promise<unknown>;
 
@@ -51,6 +52,13 @@ function resolveHandler(mod: any): Handler {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Debug: Plaid env/redirect check
+  try {
+    const urlObj = new URL(req.url || '', 'https://local');
+    const pathname = urlObj.pathname.replace(/^\/api/, '');
+    if (pathname === '/debug-env') { return await debugEnv(req, res); }
+  } catch (_e) { /* noop */ }
+
   try {
     const url = new URL(req.url ?? '/', 'http://localhost');
     const key = normalize(url.pathname);
