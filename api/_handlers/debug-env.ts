@@ -7,6 +7,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
     plaid_env: plaidEnv(),
     redirect_uri: resolveRedirectUri(),
     has_client_id: !!(process.env.PLAID_CLIENT_ID_SANDBOX || process.env.PLAID_CLIENT_ID || process.env.PLAID_CLIENT_ID_PROD),
-    has_secret: !!(process.env.PLAID_SECRET_SANDBOX || process.env.PLAID_SECRET || process.env.PLAID_SECRET_PROD)
+    has_secret: !!(process.env.PLAID_SECRET_SANDBOX || process.env.PLAID_SECRET || process.env.PLAID_SECRET_PROD),
+    blob_public_base: process.env.BLOB_PUBLIC_BASE || null
   }));
 }
