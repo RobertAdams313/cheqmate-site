@@ -14,7 +14,8 @@ function sandboxClient(): PlaidApi {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    const { flow = 'add', item_id } = (req.body && typeof req.body === 'object') ? req.body : {};
+    const { flow = 'add', item_id, access_token } =
+  (req.body && typeof req.body === 'object') ? req.body : {};
     const client = sandboxClient();
 
     const user = { client_user_id: 'sbx-smoketest' };
@@ -27,16 +28,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     let reqBody: LinkTokenCreateRequest;
     if (flow === 'update') {
-      if (!item_id) return res.status(400).json({ error: 'MISSING_ITEM_ID' });
-      reqBody = { ...base, access_token: 'access-sandbox-do-not-use-directly' as any }; // dummy to satisfy type, we override below
-      // Plaid will pick update mode from access_token param; we pass it via baseOptions headers trick:
-      // Instead of complicating with new client, just use /link/token/create with access_token in body:
-      (reqBody as any).access_token = item_id.startsWith('access-') ? item_id : undefined; // not ideal; see note below
-      // NOTE: For a strict test, you’d normally store the sandbox access_token from /sbx-exchange and pass it here.
-      // For this smoke test, we’re demonstrating the endpoint wiring; if you want a full update-mode proof,
-      // we can extend /sbx-exchange to persist the sandbox token bundle and then read it back here.
+      if (!access_token) return res.status(400).json({ error: 'MISSING_ACCESS_TOKEN' });
+      reqBody = { ...base, access_token };
     } else {
-      reqBody = base; // add-mode
+      reqBody = base;
     }
 
     const { data } = await client.linkTokenCreate(reqBody);
