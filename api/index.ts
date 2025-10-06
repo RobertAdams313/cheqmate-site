@@ -6,6 +6,7 @@ import debugEnv from './_handlers/debug-env';
 import debugEnv2 from './_handlers/debug-env2';
 import sbxExchange from './_handlers/sbx-exchange';
 import sbxLinkToken from './_handlers/sbx-link-token';
+import sbxExchangeRaw from './_handlers/sbx-exchange-raw';
 
 type Handler = (req: VercelRequest, res: VercelResponse) => unknown | Promise<unknown>;
 
@@ -55,6 +56,13 @@ function resolveHandler(mod: any): Handler {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Sandbox smoke tests
+  try {
+    const urlObj = new URL(req.url || '', 'https://local');
+    const pathname = urlObj.pathname.replace(/^\/api/, '');
+    if (pathname === '/sbx-exchange-raw') { return await sbxExchangeRaw(req, res); }
+  } catch (_e) { /* noop */ }
+
   // Sandbox smoke tests (no device required)
   try {
     const urlObj = new URL(req.url || '', 'https://local');
