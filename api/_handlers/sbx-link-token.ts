@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { Configuration, PlaidApi, PlaidEnvironments, CountryCode, LinkTokenCreateRequest } from 'plaid';
+import { Configuration, PlaidApi, PlaidEnvironments, CountryCode, LinkTokenCreateRequest, Products } from 'plaid';
 
 function sandboxClient(): PlaidApi {
   const clientId = process.env.PLAID_CLIENT_ID_SANDBOX || process.env.PLAID_CLIENT_ID;
@@ -20,7 +20,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const user = { client_user_id: 'sbx-smoketest' };
     const base: LinkTokenCreateRequest = {
-      client_name: 'CheqMate Sandbox',
+client_name: 'CheqMate Sandbox',
+      products: [Products.Transactions],
       language: 'en',
       country_codes: [CountryCode.Us],
       user
