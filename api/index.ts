@@ -4,6 +4,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import debugEnv from './_handlers/debug-env';
 import debugEnv2 from './_handlers/debug-env2';
+import sbxExchange from './_handlers/sbx-exchange';
+import sbxLinkToken from './_handlers/sbx-link-token';
 
 type Handler = (req: VercelRequest, res: VercelResponse) => unknown | Promise<unknown>;
 
@@ -53,6 +55,14 @@ function resolveHandler(mod: any): Handler {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Sandbox smoke tests (no device required)
+  try {
+    const urlObj = new URL(req.url || '', 'https://local');
+    const pathname = urlObj.pathname.replace(/^\/api/, '');
+    if (pathname === '/sbx-exchange')   { return await sbxExchange(req, res); }
+    if (pathname === '/sbx-link-token') { return await sbxLinkToken(req, res); }
+  } catch (_e) { /* noop */ }
+
   // Debug v2: Plaid env/redirect + blob base
   try {
     const urlObj = new URL(req.url || '', 'https://local');
