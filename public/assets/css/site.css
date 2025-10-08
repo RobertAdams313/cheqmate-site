@@ -49,27 +49,7 @@ small a{color:var(--muted)}
 }
 code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:90%}
 
-/* TestFlight button */
-.btn.testflight {
-  border: 0;
-  background: #0A84FF; /* system blue */
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(10,132,255,0.25);
-}
-.btn.testflight:hover,
-.btn.testflight:focus {
-  filter: brightness(1.05);
-  transform: translateY(-1px);
-}
-.nav-cta {
-  padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  background: #0A84FF;
-  color: #fff !important;
-  font-weight: 600;
-}
-
-/* Hero uses marketing kit visibly */
+/* Hero layout */
 .header {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -91,9 +71,8 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:90%}
   width: min(320px, 70%);
   height: auto;
   display: block;
+  /* transparent asset: no forced background */
   border-radius: 20px;
-  background: #fff;
-  padding: 16px;
   box-shadow: 0 8px 40px rgba(0,0,0,0.08);
 }
 @media (max-width: 900px) {
@@ -101,15 +80,12 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:90%}
   .hero-right { order: -1; margin-bottom: 1rem; }
 }
 
-/* Press asset cards */
+/* Press asset cards (transparent preview) */
 .asset-card {
   width: 100%;
   border-radius: 12px;
   padding: 12px;
   background: transparent;
-}
-.asset-card.white-bg {
-  background: #fff;
 }
 
 /* TestFlight button */
@@ -124,3 +100,4 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:90%}
   filter: brightness(1.05);
   transform: translateY(-1px);
 }
+
