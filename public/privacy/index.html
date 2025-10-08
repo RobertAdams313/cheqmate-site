@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" itemscope itemtype="https://schema.org/PrivacyPolicy">
 <head>
   <meta charset="utf-8">
   <title>CheqMate – Privacy Policy</title>
@@ -12,6 +12,7 @@
   <script defer src="/assets/js/site.js"></script>
 </head>
 <body>
+  <!-- Global header (unchanged design) -->
   <header class="site-header">
     <div class="container nav">
       <a class="brand" href="/" aria-label="CheqMate Home">
@@ -27,20 +28,82 @@
     </div>
   </header>
 
+  <!-- Page hero (same gradient system) -->
   <section class="page-hero">
     <div class="container">
       <h1 class="page-title">Privacy Policy</h1>
       <p class="page-sub">No tracking. No data sales. Your finances stay private.</p>
+      <div class="page-meta">
+        <span class="pill">Last updated: Oct 8, 2025</span>
+      </div>
     </div>
   </section>
 
   <main class="page">
     <div class="container">
-      <article class="card content">
-        <p>CheqMate does not collect personal data. We don’t maintain servers that store your financial information. Your data stays on your devices and (optionally) in your iCloud.</p>
-        <p>When you use optional features like backups, exports, or iCloud sync, your data remains under your control.</p>
-        <p>If you have questions about privacy, contact support.</p>
-      </article>
+
+      <!-- At a glance -->
+      <section class="card">
+        <div class="section-head">
+          <h2>At a glance</h2>
+          <p class="sub">The short version — what CheqMate does and doesn’t do.</p>
+        </div>
+        <ul class="ticks">
+          <li>We do <strong>not</strong> collect or sell personal data.</li>
+          <li>We do <strong>not</strong> require account linking to use the app.</li>
+          <li>Your data lives on your devices and (optionally) your iCloud.</li>
+          <li>No third-party ads or tracking SDKs.</li>
+          <li>You control backups and exports.</li>
+          <li>Delete the app to remove local data; you can also clear iCloud storage.</li>
+        </ul>
+      </section>
+
+      <!-- Two column: What we store / What we don't -->
+      <section class="grid-2">
+        <article class="card">
+          <h2>What we store</h2>
+          <p class="muted">CheqMate is designed for on-device privacy.</p>
+          <ul class="list">
+            <li><strong>On your device:</strong> your plan data (bills, pay schedules, paid status, settings).</li>
+            <li><strong>iCloud (optional):</strong> if you enable iCloud for the app, Apple stores a copy for your devices.</li>
+            <li><strong>Notifications:</strong> scheduled locally with stable IDs; no remote notification payloads.</li>
+            <li><strong>Backups/exports (optional):</strong> created locally and only shared where you choose.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h2>What we don’t collect</h2>
+          <p class="muted">CheqMate does not send your financial data off-device.</p>
+          <ul class="list">
+            <li>No personal identity profiles.</li>
+            <li>No bank credentials or transaction ingestion required to use the app.</li>
+            <li>No advertising identifiers, trackers, or third-party analytics SDKs.</li>
+            <li>No server-side storage of your plan by CheqMate.</li>
+            <li>System crash/diagnostic sharing remains your choice in iOS settings.</li>
+          </ul>
+        </article>
+      </section>
+
+      <!-- Your choices -->
+      <section class="card">
+        <div class="section-head">
+          <h2>Your choices & control</h2>
+          <p class="sub">You’re in charge of how your data is stored and shared.</p>
+        </div>
+        <ul class="list">
+          <li><strong>Back up or export:</strong> use the in-app backup/export. Files are saved locally; share where you choose.</li>
+          <li><strong>iCloud sync:</strong> toggle in iOS Settings ▸ Apple ID ▸ iCloud ▸ Manage Storage to remove app data from iCloud.</li>
+          <li><strong>Delete data:</strong> deleting the app removes local data from that device.</li>
+          <li><strong>Notifications:</strong> manage in iOS Settings ▸ Notifications.</li>
+        </ul>
+      </section>
+
+      <!-- Contact -->
+      <section class="card">
+        <h2>Questions?</h2>
+        <p>If you have privacy questions, visit <a href="/support/">Support</a>. We’re happy to help.</p>
+      </section>
+
     </div>
   </main>
 

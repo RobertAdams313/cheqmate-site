@@ -167,3 +167,84 @@ img{ max-width:100%; height:auto; display:block; }
   .links{ gap:.75rem; }
   .brand-text{ display:none; }
 }
+
+/* ---------- Page hero + layout ---------- */
+.page-hero{
+  background:
+    radial-gradient(900px 420px at 15% -10%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 60%),
+    radial-gradient(900px 420px at 100% 10%, color-mix(in srgb, var(--blue) 12%, transparent), transparent 55%);
+  border-bottom: 1px solid var(--line);
+  padding: clamp(24px, 4vw, 44px) 0;
+}
+.page-title{ margin:0 0 .25rem 0; font-size: clamp(1.5rem, 1.3rem + .8vw, 2rem); }
+.page-sub{ margin:0; color: var(--muted); }
+.page{ padding: clamp(24px, 3.5vw, 48px) 0; }
+.content p + p { margin-top:.5rem; }
+
+/* ---------- Split grid (press) ---------- */
+.grid-split{
+  display:grid; grid-template-columns: 1.4fr .8fr; gap:16px;
+}
+@media (max-width: 880px){
+  .grid-split{ grid-template-columns: 1fr; }
+}
+
+/* ---------- Press assets ---------- */
+.press-grid{
+  display:grid; grid-template-columns: repeat(2, 1fr); gap:16px;
+}
+.asset-card{
+  background: var(--panel); border:1px solid var(--line); border-radius: var(--radius);
+  padding: 14px; box-shadow: var(--shadow); text-align:center;
+}
+.asset-card figcaption{ color: var(--muted); margin-top:.35rem; }
+
+/* ---------- Downloads list ---------- */
+.downloads-list{ list-style:none; padding:0; margin:.25rem 0 0 0; display:grid; gap:.4rem; }
+.downloads-list a{ color: var(--text); }
+.downloads-list a:hover{ color: color-mix(in srgb, var(--gold) 40%, var(--text)); }
+
+/* ---------- FAQ (details) ---------- */
+.faq details{
+  border:1px solid var(--line); border-radius: 12px; padding:.75rem .9rem; background: var(--panel); box-shadow: var(--shadow);
+}
+.faq details + details{ margin-top:.6rem; }
+.faq summary{
+  cursor:pointer; list-style:none; font-weight:600; position:relative; padding-right:1.5rem;
+}
+.faq summary::-webkit-details-marker{ display:none; }
+.faq details summary::after{
+  content:"›"; position:absolute; right:0; top:0; transform: rotate(90deg); transition: transform .15s ease;
+}
+.faq details[open] summary::after{ transform: rotate(270deg); }
+.faq p, .faq ol{ color: var(--muted); margin:.5rem 0 0 0; }
+
+/* ---------- Pro callout reuse ---------- */
+.pro-callout .compare.mini{
+  display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:.75rem;
+}
+@media (max-width: 880px){
+  .pro-callout .compare.mini{ grid-template-columns: 1fr; }
+}
+
+/* Privacy page helpers (keeps existing design language) */
+.page-meta { margin-top:.6rem; }
+.pill{
+  display:inline-block; font-size:.85rem; font-weight:600;
+  color:#111; background: var(--gold); padding:.2rem .5rem; border-radius:999px;
+}
+
+/* Two-column layout that collapses on mobile */
+.grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+@media (max-width: 880px){ .grid-2{ grid-template-columns:1fr; } }
+
+/* Simple content lists */
+.list{ margin:.35rem 0 0 0; padding-left:1rem; color: var(--muted); display:grid; gap:.35rem; }
+.list li strong { color: var(--text); }
+
+/* More space between each FAQ item */
+.faq{ display: grid; gap: 1.1rem; }      /* was stacked with tiny margins */
+.faq details{ margin: 0; }               /* grid gap now handles spacing */
+
+/* Extra space between FAQ and the Pro section */
+.card + .pro-callout{ margin-top: 24px; } /* adds a clear break between sections */

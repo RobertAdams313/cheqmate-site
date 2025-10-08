@@ -36,6 +36,7 @@
 
   <main class="page">
     <div class="container">
+      <!-- FAQ -->
       <section class="card">
         <h2>FAQ</h2>
         <div class="faq">
@@ -43,25 +44,70 @@
             <summary>Which iOS versions are supported?</summary>
             <p><strong>iOS 26 and later.</strong> Apple Watch and widgets included.</p>
           </details>
+
           <details>
             <summary>Does CheqMate connect to my bank?</summary>
             <p>No. CheqMate is privacy-first. You can plan and track without linking accounts.</p>
           </details>
+
           <details>
-            <summary>How do I join the beta?</summary>
-            <p>Tap <a href="/testflight/" target="_blank" rel="noopener">Test on TestFlight</a> and follow the prompt.</p>
+            <summary>How do I add my first paycheck?</summary>
+            <p>Open CheqMate and add a pay schedule: choose your <em>frequency</em> (weekly, biweekly, semimonthly, monthly), set the <em>anchor</em> date (next or last payday), then save. Your upcoming pay periods appear in Plan.</p>
           </details>
+
           <details>
-            <summary>How do I capture screenshots with the device bezel?</summary>
-            <ol>
-              <li>Simulator ▸ <em>Window</em> ▸ <strong>Show Device Bezels</strong></li>
-              <li>File ▸ <strong>New Screenshot</strong></li>
-              <li>PNG saves with bezel — drop into <code>/public/assets/screenshots/</code></li>
-            </ol>
+            <summary>How do I add a bill?</summary>
+            <p>Go to Bills and tap “+”. Enter the name, amount, due date (or recurrence), and optional category. Bills automatically map into the correct pay period in Plan.</p>
+          </details>
+
+          <details>
+            <summary>How do I mark a bill as paid?</summary>
+            <p>From Plan or Bills, tap the bill’s paid toggle. Totals update instantly; tap again to undo.</p>
+          </details>
+
+          <details>
+            <summary>What is “Free-to-spend” and how is it calculated?</summary>
+            <p>It’s the money left in a period after planned income, bills, and any holds. It updates live as you mark bills paid or change your plan.</p>
+          </details>
+
+          <details>
+            <summary>Can I carry remaining funds to the next paycheck?</summary>
+            <p>Yes. In Settings, enable <strong>Carry Over Remaining</strong>. You can disable it anytime if you prefer each period to start fresh.</p>
+          </details>
+
+          <details>
+            <summary>How do I manage notifications?</summary>
+            <p>Open Settings ▸ Notifications to allow alerts. Baseline bill reminders are local and privacy-friendly. (Pro adds advanced limits and quiet hours.)</p>
+          </details>
+
+          <details>
+            <summary>How do I add widgets or use Apple Watch?</summary>
+            <p>On iPhone, long-press the Home Screen ▸ “+” ▸ search “CheqMate”. On Apple Watch, install the companion app and add the complication from the watch face edit screen.</p>
+          </details>
+
+          <details>
+            <summary>How do I back up or restore my data?</summary>
+            <p>Settings ▸ Backup & Restore. You can export a JSON snapshot and import it later. Data stays under your control.</p>
+          </details>
+
+          <details>
+            <summary>How do I refresh widgets if data looks stale?</summary>
+            <p>Settings ▸ <strong>Refresh Widgets Now</strong>. This forces a data write & timeline reload.</p>
+          </details>
+
+          <details>
+            <summary>How do I get CheqMate Pro?</summary>
+            <p>In-app purchase from Settings. Pro unlocks: Debt Calculator, multi-period Insights, alternate icons, typography overrides, extra accent colors, encrypted backups, advanced notification limits, quiet hours, and multiple income sources.</p>
+          </details>
+
+          <details>
+            <summary>How do I change the app icon or typography?</summary>
+            <p>After unlocking Pro, go to Settings ▸ Appearance to choose alternate icons and adjust typography.</p>
           </details>
         </div>
       </section>
 
+      <!-- Extra space before Pro section -->
       <section id="pro" class="card pro-callout">
         <h2>CheqMate Pro</h2>
         <p>Unlock advanced customization and power features (in-app purchase).</p>
