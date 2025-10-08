@@ -48,3 +48,24 @@ small a{color:var(--muted)}
   border:1px solid rgba(255,255,255,.12);
 }
 code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:90%}
+
+/* TestFlight button */
+.btn.testflight {
+  border: 0;
+  background: #0A84FF; /* system blue */
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(10,132,255,0.25);
+}
+.btn.testflight:hover,
+.btn.testflight:focus {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+.nav-cta {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: #0A84FF;
+  color: #fff !important;
+  font-weight: 600;
+}
+
