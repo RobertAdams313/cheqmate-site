@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cheqmate.app/sitemap.xml
+Sitemap: https://cheqmateios.app/sitemap.xml
