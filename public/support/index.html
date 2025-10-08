@@ -1,43 +1,109 @@
 <!doctype html>
-<html lang="en" itemscope itemtype="https://schema.org/FAQPage">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>CheqMate – Support</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="canonical" href="https://cheqmateios.app/support/">
-  <meta name="description" content="Support, FAQ, and tips for using CheqMate.">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="CheqMate – Support">
-  <meta property="og:description" content="Frequently asked questions and help for CheqMate.">
-  <meta property="og:url" content="https://cheqmateios.app/support/">
+  <meta name="description" content="FAQ and tips for using CheqMate.">
   <meta property="og:image" content="https://cheqmateios.app/assets/img/og-cheqmate.png">
   <link rel="stylesheet" href="/assets/css/site.css">
+  <link rel="icon" type="image/png" href="/assets/img/cheqmate-mark-1024-transparent.png">
+  <script defer src="/assets/js/site.js"></script>
 </head>
 <body>
-  <div class="wrap">
-    <nav>
-      <a href="/">Home</a>
-      <a href="/support/">Support</a>
-      <a href="/privacy/">Privacy</a>
-      <a href="/terms/">Terms</a>
-      <a href="/accessibility/">Accessibility</a>
-      <a href="/press/">Press</a>
-    </nav>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="/" aria-label="CheqMate Home">
+        <img src="/assets/img/cheqmate-mark-1024-transparent.png" alt="" class="brand-mark">
+        <span class="brand-text">CheqMate</span>
+      </a>
+      <nav class="links">
+        <a href="/">Home</a>
+        <a href="/support/">Support</a>
+        <a href="/press/">Press</a>
+        <a class="btn small testflight" href="/testflight/" target="_blank" rel="noopener">Test on TestFlight</a>
+      </nav>
+    </div>
+  </header>
 
-    <article class="card">
-      <h1>Support</h1>
+  <section class="page-hero">
+    <div class="container">
+      <h1 class="page-title">Support</h1>
+      <p class="page-sub">Quick answers and tips for getting the most out of CheqMate.</p>
+    </div>
+  </section>
 
-      <h2>FAQ</h2>
-      <p><strong>Does CheqMate connect to my bank?</strong><br>
-      No. CheqMate is designed for privacy. You can manually track bills and paychecks without linking accounts.</p>
+  <main class="page">
+    <div class="container">
+      <section class="card">
+        <h2>FAQ</h2>
+        <div class="faq">
+          <details open>
+            <summary>Which iOS versions are supported?</summary>
+            <p><strong>iOS 26 and later.</strong> Apple Watch and widgets included.</p>
+          </details>
+          <details>
+            <summary>Does CheqMate connect to my bank?</summary>
+            <p>No. CheqMate is privacy-first. You can plan and track without linking accounts.</p>
+          </details>
+          <details>
+            <summary>How do I join the beta?</summary>
+            <p>Tap <a href="/testflight/" target="_blank" rel="noopener">Test on TestFlight</a> and follow the prompt.</p>
+          </details>
+          <details>
+            <summary>How do I capture screenshots with the device bezel?</summary>
+            <ol>
+              <li>Simulator ▸ <em>Window</em> ▸ <strong>Show Device Bezels</strong></li>
+              <li>File ▸ <strong>New Screenshot</strong></li>
+              <li>PNG saves with bezel — drop into <code>/public/assets/screenshots/</code></li>
+            </ol>
+          </details>
+        </div>
+      </section>
 
-      <p><strong>Which iOS versions are supported?</strong><br>
-      <strong>iOS 26 and later</strong>. Apple Watch and widgets included.</p>
-    </article>
+      <section id="pro" class="card pro-callout">
+        <h2>CheqMate Pro</h2>
+        <p>Unlock advanced customization and power features (in-app purchase).</p>
+        <div class="compare mini">
+          <div class="tier">
+            <h3>Free</h3>
+            <ul class="ticks">
+              <li>Paycheck-first planning</li>
+              <li>One-tap bill tracking</li>
+              <li>Free-to-spend</li>
+              <li>Carry-over toggle</li>
+              <li>Widgets & Apple Watch</li>
+              <li>Siri Shortcuts / App Intents</li>
+              <li>Bill notifications (baseline)</li>
+              <li>Local backup & restore</li>
+            </ul>
+          </div>
+          <div class="tier pro-tier">
+            <h3>Pro</h3>
+            <ul class="ticks">
+              <li>Debt Calculator</li>
+              <li>Multi-period Insights</li>
+              <li>Alternate app icons</li>
+              <li>Typography overrides</li>
+              <li>Extra accent colors</li>
+              <li>Encrypted backup export</li>
+              <li>Advanced notification limits</li>
+              <li>Quiet hours</li>
+              <li>Multiple income sources</li>
+            </ul>
+            <a class="btn big" href="/support/#pro">How to get Pro</a>
+            <p class="footnote">Availability may vary by build. No data collection.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
 
-    <footer class="footer">
-      <small>© 2025 CheqMate. <a href="/privacy/">Privacy</a> • <a href="/terms/">Terms</a></small>
-    </footer>
-  </div>
+  <footer class="site-footer">
+    <div class="container foot">
+      <small>© 2025 CheqMate • <a href="/privacy/">Privacy</a> • <a href="/terms/">Terms</a></small>
+    </div>
+  </footer>
 </body>
 </html>
