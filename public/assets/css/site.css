@@ -248,3 +248,20 @@ img{ max-width:100%; height:auto; display:block; }
 
 /* Extra space between FAQ and the Pro section */
 .card + .pro-callout{ margin-top: 24px; } /* adds a clear break between sections */
+
+/* --- Global utility: vertical stack spacing for section groups --- */
+.stack-lg > * + * { margin-top: 18px; }      /* comfortable spacing between cards/sections */
+@media (max-width: 640px){ .stack-lg > * + * { margin-top: 16px; } }
+
+/* --- Footer links wrap nicely on mobile --- */
+.foot small { display: inline-flex; gap: .5rem; flex-wrap: wrap; }
+.foot a { color: var(--muted); }
+.foot a:hover { color: var(--text); }
+
+/* --- Mobile niceties (better wrapping & touch sizes) --- */
+.links { flex-wrap: wrap; }
+.btn, .iconbtn { min-height: 44px; }         /* Apple HIG touch target */
+@media (max-width: 880px){
+  .grid-2 { grid-template-columns: 1fr; }    /* ensure privacy two-column stacks on phones */
+  .container { width: min(100% - 24px, var(--container)); } /* a bit more side room on small screens */
+}

@@ -12,7 +12,7 @@
   <script defer src="/assets/js/site.js"></script>
 </head>
 <body>
-  <!-- Global header (unchanged design) -->
+  <!-- Header (unchanged) -->
   <header class="site-header">
     <div class="container nav">
       <a class="brand" href="/" aria-label="CheqMate Home">
@@ -28,7 +28,7 @@
     </div>
   </header>
 
-  <!-- Page hero (same gradient system) -->
+  <!-- Page hero -->
   <section class="page-hero">
     <div class="container">
       <h1 class="page-title">Privacy Policy</h1>
@@ -40,8 +40,7 @@
   </section>
 
   <main class="page">
-    <div class="container">
-
+    <div class="container stack-lg"><!-- stack-lg adds section spacing -->
       <!-- At a glance -->
       <section class="card">
         <div class="section-head">
@@ -64,10 +63,10 @@
           <h2>What we store</h2>
           <p class="muted">CheqMate is designed for on-device privacy.</p>
           <ul class="list">
-            <li><strong>On your device:</strong> your plan data (bills, pay schedules, paid status, settings).</li>
-            <li><strong>iCloud (optional):</strong> if you enable iCloud for the app, Apple stores a copy for your devices.</li>
-            <li><strong>Notifications:</strong> scheduled locally with stable IDs; no remote notification payloads.</li>
-            <li><strong>Backups/exports (optional):</strong> created locally and only shared where you choose.</li>
+            <li><strong>On your device:</strong> plan data (bills, pay schedules, paid status, settings).</li>
+            <li><strong>iCloud (optional):</strong> if enabled, Apple stores a copy for your devices.</li>
+            <li><strong>Notifications:</strong> scheduled locally with stable IDs; no remote payloads.</li>
+            <li><strong>Backups/exports (optional):</strong> created locally and shared where you choose.</li>
           </ul>
         </article>
 
@@ -76,7 +75,7 @@
           <p class="muted">CheqMate does not send your financial data off-device.</p>
           <ul class="list">
             <li>No personal identity profiles.</li>
-            <li>No bank credentials or transaction ingestion required to use the app.</li>
+            <li>No bank credentials or forced transaction ingestion.</li>
             <li>No advertising identifiers, trackers, or third-party analytics SDKs.</li>
             <li>No server-side storage of your plan by CheqMate.</li>
             <li>System crash/diagnostic sharing remains your choice in iOS settings.</li>
@@ -91,9 +90,9 @@
           <p class="sub">You’re in charge of how your data is stored and shared.</p>
         </div>
         <ul class="list">
-          <li><strong>Back up or export:</strong> use the in-app backup/export. Files are saved locally; share where you choose.</li>
-          <li><strong>iCloud sync:</strong> toggle in iOS Settings ▸ Apple ID ▸ iCloud ▸ Manage Storage to remove app data from iCloud.</li>
-          <li><strong>Delete data:</strong> deleting the app removes local data from that device.</li>
+          <li><strong>Back up or export:</strong> use in-app backup/export (JSON). Files are local; share where you choose.</li>
+          <li><strong>iCloud sync:</strong> manage in iOS Settings ▸ Apple ID ▸ iCloud ▸ Manage Storage.</li>
+          <li><strong>Delete data:</strong> deleting the app removes local data on that device.</li>
           <li><strong>Notifications:</strong> manage in iOS Settings ▸ Notifications.</li>
         </ul>
       </section>
@@ -103,13 +102,13 @@
         <h2>Questions?</h2>
         <p>If you have privacy questions, visit <a href="/support/">Support</a>. We’re happy to help.</p>
       </section>
-
     </div>
   </main>
 
+  <!-- Footer with Accessibility link -->
   <footer class="site-footer">
     <div class="container foot">
-      <small>© 2025 CheqMate • <a href="/privacy/">Privacy</a> • <a href="/terms/">Terms</a></small>
+      <small>© 2025 CheqMate • <a href="/privacy/">Privacy</a> • <a href="/terms/">Terms</a> • <a href="/accessibility/">Accessibility</a></small>
     </div>
   </footer>
 </body>
