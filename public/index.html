@@ -4,55 +4,189 @@
   <meta charset="utf-8">
   <title>CheqMate — Plan every paycheck</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="CheqMate shows you exactly what’s free-to-spend and what bills are covered before payday arrives. Private by design, built for iOS 26+ and Apple Watch.">
+  <meta name="description" content="CheqMate shows you what’s free-to-spend and which bills are covered before payday. Private by design. Built for iOS 26+ and Apple Watch.">
   <link rel="canonical" href="https://cheqmateios.app/">
   <link rel="stylesheet" href="/assets/css/site.css">
   <meta property="og:type" content="website">
   <meta property="og:title" content="CheqMate — Plan every paycheck">
   <meta property="og:description" content="Budget by paycheck, track bills, crush debt. Private by design.">
   <meta property="og:url" content="https://cheqmateios.app/">
-  <!-- Keep opaque OG for best social previews; swap to transparent if you prefer -->
   <meta property="og:image" content="https://cheqmateios.app/assets/img/og-cheqmate.png">
   <link rel="apple-touch-icon" href="/assets/img/cheqmate-mark-1024-transparent.png">
   <link rel="icon" type="image/png" href="/assets/img/cheqmate-mark-1024-transparent.png">
+  <script defer src="/assets/js/site.js"></script>
 </head>
 <body>
-  <div class="wrap">
-    <nav>
-      <a href="/support/">Support</a>
-      <a href="/privacy/">Privacy</a>
-      <a href="/terms/">Terms</a>
-      <a href="/accessibility/">Accessibility</a>
-      <a href="/press/">Press</a>
-    </nav>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="/" aria-label="CheqMate Home">
+        <img src="/assets/img/cheqmate-mark-1024-transparent.png" alt="" class="brand-mark">
+        <span class="brand-text">CheqMate</span>
+      </a>
+      <nav class="links">
+        <a href="#features">Features</a>
+        <a href="#pro">Pro</a>
+        <a href="/support/">Support</a>
+        <a href="/press/">Press</a>
+        <a class="btn small testflight" href="/testflight/" target="_blank" rel="noopener">Test on TestFlight</a>
+      </nav>
+    </div>
+  </header>
 
-    <header class="header">
-      <div class="hero-left">
-        <img class="hero-logo" src="/assets/img/cheqmate-wordmark-1024x512-transparent.png" alt="CheqMate wordmark">
-        <p class="lead">See upcoming bills, what’s already covered, and what’s safe to spend. Built for <strong>iOS 26+</strong> and Apple Watch. Private by design.</p>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <img class="hero-wordmark" src="/assets/img/cheqmate-wordmark-1024x512-transparent.png" alt="CheqMate">
+        <p class="lead">
+          See upcoming bills, what’s covered, and what’s safe to spend.
+          Built for <strong>iOS 26+</strong> and Apple Watch. Private by design.
+        </p>
         <div class="cta">
           <a class="btn" href="/support/">Get Started</a>
           <a class="btn ghost" href="/privacy/">Privacy First</a>
-          <a class="btn testflight" href="/testflight/" target="_blank" rel="noopener" aria-label="Join the CheqMate beta on TestFlight">Test on TestFlight</a>
+          <a class="btn testflight" href="/testflight/" target="_blank" rel="noopener">Test on TestFlight</a>
         </div>
       </div>
-      <div class="hero-right">
-        <img class="hero-mark" src="/assets/img/cheqmate-mark-1024-transparent.png" alt="CheqMate crowned C mark">
-      </div>
-    </header>
 
-    <article class="card">
-      <h2>Why CheqMate?</h2>
-      <div class="grid">
-        <p><strong>Paycheck-first planning.</strong><br>Match bills to paydays and always know what’s covered before it hits.</p>
-        <p><strong>Track bills with taps.</strong><br>Mark as paid and watch remaining totals update instantly.</p>
-        <p><strong>Private by design.</strong><br>No account linking required. Data stays with you.</p>
-      </div>
-    </article>
+      <figure class="hero-art">
+        <img class="hero-mark" src="/assets/img/cheqmate-mark-1024-transparent.png" alt="CheqMate mark">
+      </figure>
+    </div>
+  </section>
 
-    <footer class="footer">
-      <small>© 2025 CheqMate. <a href="/privacy/">Privacy</a> • <a href="/terms/">Terms</a></small>
-    </footer>
-  </div>
+  <!-- Screenshot showcase (drop your bezel screenshots in /assets/screenshots) -->
+  <section class="screenshots" aria-labelledby="screenshots-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="screenshots-heading">See it in action</h2>
+        <p class="sub">Real captures from the iOS Simulator with device bezels.</p>
+      </div>
+
+      <!-- HOW TO:
+           1) Simulator ▸ Window ▸ Show Device Bezels
+           2) File ▸ New Screenshot
+           3) Save PNGs into /public/assets/screenshots/
+           4) Replace the src paths below -->
+      <div class="shot-strip" id="shotStrip" aria-label="App screenshots">
+        <figure class="device"><img src="/assets/screenshots/plan-light.png" alt="Plan view"></figure>
+        <figure class="device"><img src="/assets/screenshots/plan-dark.png"  alt="Plan view in dark mode"></figure>
+        <figure class="device"><img src="/assets/screenshots/bills.png"      alt="Bills list"></figure>
+        <figure class="device"><img src="/assets/screenshots/insights.png"   alt="Insights"></figure>
+        <figure class="device"><img src="/assets/screenshots/watch.png"      alt="Watch app"></figure>
+      </div>
+
+      <div class="strip-controls">
+        <button class="iconbtn" data-scroll="prev" aria-label="Scroll screenshots left">‹</button>
+        <button class="iconbtn" data-scroll="next" aria-label="Scroll screenshots right">›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature highlights -->
+  <section id="features" class="features" aria-labelledby="features-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="features-heading">Everything you need to plan by paycheck</h2>
+        <p class="sub">Fast, private, and built for iOS 26+.</p>
+      </div>
+
+      <div class="cards">
+        <article class="card feature">
+          <div class="icon">💸</div>
+          <h3>Paycheck-first planning</h3>
+          <p>Match bills to paydays so you know what’s covered before it hits.</p>
+        </article>
+        <article class="card feature">
+          <div class="icon">✅</div>
+          <h3>One-tap bill tracking</h3>
+          <p>Mark as paid and watch remaining totals update instantly.</p>
+        </article>
+        <article class="card feature">
+          <div class="icon">🧮</div>
+          <h3>Free-to-spend clarity</h3>
+          <p>See exactly what’s safe to spend each period after bills and holds.</p>
+        </article>
+        <article class="card feature">
+          <div class="icon">🔁</div>
+          <h3>Carry-over control</h3>
+          <p>Optionally carry remaining funds to the next paycheck. Your choice.</p>
+        </article>
+        <article class="card feature">
+          <div class="icon">📲</div>
+          <h3>Widgets & Watch</h3>
+          <p>iOS and watchOS widgets plus a Watch app for quick glances.</p>
+        </article>
+        <article class="card feature">
+          <div class="icon">🗣️</div>
+          <h3>Siri Shortcuts</h3>
+          <p>Ask for free-to-spend, upcoming bills, and more via App Intents.</p>
+        </article>
+        <article class="card feature">
+          <div class="icon">🔔</div>
+          <h3>Smart reminders</h3>
+          <p>Bill notifications that use stable IDs, with quiet defaults.</p>
+        </article>
+        <article class="card feature">
+          <div class="icon">🗂️</div>
+          <h3>Local backup & restore</h3>
+          <p>Export and import your plan locally. Your data stays with you.</p>
+        </article>
+        <article class="card feature">
+          <div class="icon">💡</div>
+          <h3>Coach tips</h3>
+          <p>Inline, HIG-style suggestions powered by your actual plan data.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CheqMate Pro -->
+  <section id="pro" class="pro" aria-labelledby="pro-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="pro-heading">CheqMate Pro</h2>
+        <p class="sub">Unlock advanced customization and power features — available as an in-app purchase.</p>
+      </div>
+
+      <div class="compare">
+        <div class="tier">
+          <h3>Free</h3>
+          <ul class="ticks">
+            <li>Paycheck-first planning</li>
+            <li>One-tap bill tracking</li>
+            <li>Free-to-spend</li>
+            <li>Carry-over toggle</li>
+            <li>Widgets & Apple Watch</li>
+            <li>Siri Shortcuts / App Intents</li>
+            <li>Bill notifications (baseline)</li>
+            <li>Local backup & restore</li>
+          </ul>
+        </div>
+        <div class="tier pro-tier">
+          <h3>Pro</h3>
+          <ul class="ticks">
+            <li>Debt Calculator</li>
+            <li>Multi-period Insights</li>
+            <li>Alternate app icons</li>
+            <li>Typography overrides</li>
+            <li>Extra accent colors</li>
+            <li>Encrypted backup export</li>
+            <li>Advanced notification limits</li>
+            <li>Quiet hours</li>
+            <li>Multiple income sources</li>
+          </ul>
+          <a class="btn big" href="/support/#pro" aria-label="How to get CheqMate Pro">How to get Pro</a>
+          <p class="footnote">Feature availability based on current app build. No data collection.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container foot">
+      <small>© 2025 CheqMate • <a href="/privacy/">Privacy</a> • <a href="/terms/">Terms</a></small>
+    </div>
+  </footer>
 </body>
 </html>
