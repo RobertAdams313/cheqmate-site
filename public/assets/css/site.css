@@ -619,3 +619,41 @@ img{ max-width:100%; height:auto; display:block; }
   scroll-snap-align: start;
   background-clip: padding-box;
 }
+
+
+/* ==== Watch bezel: thinner rim + no crown (overrides) ==== */
+.device.device--watch{
+  /* much thinner case wall */
+  padding: clamp(3px, 3%, 8px);           /* was ~5.5% */
+  border-radius: 24% / 22%;               /* slightly tighter curve to match thin rim */
+  aspect-ratio: 1 / 1.25;
+  background: var(--panel);               /* remove heavy side lighting */
+  box-shadow: var(--shadow);
+  overflow: visible;
+}
+
+.device.device--watch > img{
+  width:100%; height:100%; display:block;
+  object-fit: cover;
+  border-radius: 22% / 20%;               /* inner glass adjusted to thinner rim */
+  background:#000;
+}
+
+/* subtle inner edge, but not washed out */
+.device.device--watch::before{
+  content:"";
+  position:absolute; inset:0;
+  border-radius: 24% / 22%;
+  pointer-events:none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.03), /* light hairline */
+    inset 0 0 0 4px rgba(0,0,0,.55),       /* thinner dark lip (was 8px) */
+    inset 0 0 28px 8px rgba(0,0,0,.45);    /* softer falloff */
+  /* much lighter highlights, no blend mode to avoid gray haze */
+  background:
+    radial-gradient(120% 110% at 18% 8%, rgba(255,255,255,.05), transparent 55%),
+    radial-gradient(120% 110% at 82% 92%, rgba(255,255,255,.02), transparent 60%);
+}
+
+/* remove the crown */
+.device.device--watch::after{ content:none !important; }
