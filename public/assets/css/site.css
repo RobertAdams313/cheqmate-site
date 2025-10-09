@@ -265,3 +265,357 @@ img{ max-width:100%; height:auto; display:block; }
   .grid-2 { grid-template-columns: 1fr; }    /* ensure privacy two-column stacks on phones */
   .container { width: min(100% - 24px, var(--container)); } /* a bit more side room on small screens */
 }
+
+/* ==============  Design tokens  ============== */
+:root{
+  --bg: #0b0b0c;
+  --bg-soft: #111114;
+  --panel: #15161a;
+  --text: #EDEEF2;
+  --muted: #A9AAB3;
+  --line: rgba(255,255,255,0.08);
+  --gold: #F2C230; /* crown */
+  --blue: #0A84FF; /* TestFlight CTA */
+  --green: #32D74B;
+  --radius: 16px;
+  --shadow: 0 10px 40px rgba(0,0,0,0.35);
+  --container: 1120px;
+}
+
+/* Light mode */
+@media (prefers-color-scheme: light){
+  :root{
+    --bg: #fafafa;
+    --bg-soft: #f5f6f8;
+    --panel: #ffffff;
+    --text: #111214;
+    --muted: #5d6067;
+    --line: rgba(0,0,0,0.08);
+    --shadow: 0 8px 32px rgba(0,0,0,0.08);
+  }
+}
+
+/* ==============  Base  ============== */
+*{ box-sizing: border-box; }
+html,body{ height:100%; }
+body{
+  margin:0; font-family: ui-sans-serif, -apple-system, system-ui, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  color: var(--text); background: var(--bg);
+}
+a{ color: inherit; text-decoration: none; }
+img{ max-width:100%; height:auto; display:block; }
+.container{ width: min(100% - 32px, var(--container)); margin-inline:auto; }
+
+/* ==============  Header / Nav  ============== */
+.site-header{
+  position: sticky; top:0; z-index: 20; border-bottom: 1px solid var(--line);
+  backdrop-filter: saturate(1.1) blur(10px);
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+}
+.nav{
+  display: flex; align-items: center; justify-content: space-between; padding: 12px 0;
+}
+.brand{ display:flex; align-items:center; gap:.65rem; font-weight:700; }
+.brand-mark{ width:28px; height:28px; }
+.brand-text{ letter-spacing:.2px; }
+.links{ display:flex; align-items:center; gap:1rem; }
+.links a{ color: var(--muted); }
+.links a:hover{ color: var(--text); }
+
+/* Buttons */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:.75rem 1rem; border:1px solid var(--line);
+  border-radius: 999px; background: var(--panel); color: var(--text);
+  box-shadow: var(--shadow); transition: transform .12s ease, filter .12s ease, background .2s ease;
+}
+.btn:hover{ transform: translateY(-1px); filter: brightness(1.05); }
+.btn.ghost{ background: transparent; border-color: var(--line); box-shadow: none; }
+.btn.small{ padding:.5rem .75rem; font-size:.9rem; }
+.btn.big{ padding:.9rem 1.15rem; font-weight: 700; }
+.btn.testflight{ background: var(--blue); border-color: transparent; color:#fff; }
+
+/* ==============  Hero  ============== */
+.hero{
+  background:
+    radial-gradient(1200px 600px at 15% -10%, color-mix(in srgb, var(--gold) 20%, transparent), transparent 60%),
+    radial-gradient(1200px 600px at 100% 10%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 55%);
+  border-bottom: 1px solid var(--line);
+}
+.hero-grid{
+  display:grid; grid-template-columns: 1.2fr .8fr; gap: clamp(1rem, 4vw, 3rem);
+  align-items:center; padding: clamp(32px, 6vw, 72px) 0;
+}
+.hero-wordmark{ width:min(520px, 90%); margin-bottom: .5rem; }
+.lead{ color: var(--muted); font-size: clamp(1.05rem, 1.2rem + .2vw, 1.25rem); line-height:1.5; }
+.cta{ display:flex; gap:.75rem; flex-wrap:wrap; margin-top:1rem; }
+.hero-art{ display:flex; align-items:center; justify-content:center; }
+.hero-mark{
+  width:min(340px, 78%); border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+/* ==============  Section headings  ============== */
+.section-head{ display:flex; align-items:end; justify-content:space-between; gap:1rem; margin-bottom: 1rem;}
+.section-head h2{ margin:0; font-size: clamp(1.25rem, 1.2rem + .6vw, 1.75rem); }
+.section-head .sub{ margin:0; color:var(--muted); }
+
+/* ==============  Screenshots  ============== */
+.screenshots{ padding: clamp(28px, 4vw, 56px) 0; background: var(--bg-soft); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.shot-strip{
+  display:grid; grid-auto-flow: column; grid-auto-columns: minmax(220px, 320px);
+  gap: 16px; overflow-x: auto; padding: 8px; scroll-snap-type: x mandatory;
+}
+.shot-strip::-webkit-scrollbar{ height:10px; }
+.shot-strip::-webkit-scrollbar-thumb{ background: var(--line); border-radius: 999px; }
+.device{
+  scroll-snap-align: start; background: var(--panel); border:1px solid var(--line);
+  border-radius: 22px; padding: 10px; box-shadow: var(--shadow);
+}
+.device img{ border-radius: 14px; }
+.strip-controls{ display:flex; justify-content:flex-end; gap:.5rem; margin-top:.5rem; }
+.iconbtn{
+  background: var(--panel); color: var(--text); border:1px solid var(--line);
+  border-radius: 10px; width:40px; height:36px; box-shadow: var(--shadow);
+}
+
+/* ==============  Features grid  ============== */
+.features{ padding: clamp(28px, 4vw, 56px) 0; }
+.cards{ display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; }
+.card{
+  background: var(--panel); border:1px solid var(--line); border-radius: var(--radius);
+  padding: 18px; box-shadow: var(--shadow);
+}
+.card h3{ margin:0 0 .25rem 0; }
+.card p{ color: var(--muted); margin:0; }
+.feature .icon{
+  width:36px; height:36px; border-radius:10px;
+  display:grid; place-items:center; margin-bottom:.5rem;
+  background: color-mix(in srgb, var(--gold) 24%, transparent);
+}
+
+/* ==============  Pro section  ============== */
+.pro{
+  padding: clamp(28px, 4vw, 56px) 0; background: var(--bg-soft);
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+}
+.compare{
+  display:grid; grid-template-columns: 1fr 1fr; gap:16px;
+}
+.tier{
+  background: var(--panel); border:1px solid var(--line); border-radius: var(--radius);
+  padding: 18px; box-shadow: var(--shadow);
+}
+.tier h3{ margin-top:0; }
+.ticks{ list-style:none; padding:0; margin:.5rem 0 0 0; display:grid; gap:.35rem; }
+.ticks li::before{
+  content:"✓"; color: var(--green); margin-right:.5rem;
+}
+.pro-tier{
+  border-color: color-mix(in srgb, var(--gold) 40%, var(--line));
+  position: relative;
+}
+.pro-tier h3::after{
+  content:"Pro"; font-size:.8rem; font-weight:600; color: #111; background: var(--gold);
+  padding:.15rem .4rem; border-radius: 999px; margin-left:.5rem;
+}
+.pro-tier .footnote{ color: var(--muted); font-size:.9rem; margin-top:.5rem; }
+
+/* ==============  Footer  ============== */
+.site-footer{ border-top:1px solid var(--line); }
+.foot{ padding: 16px 0; color: var(--muted); }
+
+/* ==============  Responsive  ============== */
+@media (max-width: 980px){
+  .hero-grid{ grid-template-columns: 1fr; }
+}
+@media (max-width: 880px){
+  .cards{ grid-template-columns: 1fr; }
+  .compare{ grid-template-columns: 1fr; }
+  .links{ gap:.75rem; }
+  .brand-text{ display:none; }
+}
+
+/* ---------- Page hero + layout ---------- */
+.page-hero{
+  background:
+    radial-gradient(900px 420px at 15% -10%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 60%),
+    radial-gradient(900px 420px at 100% 10%, color-mix(in srgb, var(--blue) 12%, transparent), transparent 55%);
+  border-bottom: 1px solid var(--line);
+  padding: clamp(24px, 4vw, 44px) 0;
+}
+.page-title{ margin:0 0 .25rem 0; font-size: clamp(1.5rem, 1.3rem + .8vw, 2rem); }
+.page-sub{ margin:0; color: var(--muted); }
+.page{ padding: clamp(24px, 3.5vw, 48px) 0; }
+.content p + p { margin-top:.5rem; }
+
+/* ---------- Split grid (press) ---------- */
+.grid-split{
+  display:grid; grid-template-columns: 1.4fr .8fr; gap:16px;
+}
+@media (max-width: 880px){
+  .grid-split{ grid-template-columns: 1fr; }
+}
+
+/* ---------- Press assets ---------- */
+.press-grid{
+  display:grid; grid-template-columns: repeat(2, 1fr); gap:16px;
+}
+.asset-card{
+  background: var(--panel); border:1px solid var(--line); border-radius: var(--radius);
+  padding: 14px; box-shadow: var(--shadow); text-align:center;
+}
+.asset-card figcaption{ color: var(--muted); margin-top:.35rem; }
+
+/* ---------- Downloads list ---------- */
+.downloads-list{ list-style:none; padding:0; margin:.25rem 0 0 0; display:grid; gap:.4rem; }
+.downloads-list a{ color: var(--text); }
+.downloads-list a:hover{ color: color-mix(in srgb, var(--gold) 40%, var(--text)); }
+
+/* ---------- FAQ (details) ---------- */
+.faq details{
+  border:1px solid var(--line); border-radius: 12px; padding:.75rem .9rem; background: var(--panel); box-shadow: var(--shadow);
+}
+.faq details + details{ margin-top:.6rem; }
+.faq summary{
+  cursor:pointer; list-style:none; font-weight:600; position:relative; padding-right:1.5rem;
+}
+.faq summary::-webkit-details-marker{ display:none; }
+.faq details summary::after{
+  content:"›"; position:absolute; right:0; top:0; transform: rotate(90deg); transition: transform .15s ease;
+}
+.faq details[open] summary::after{ transform: rotate(270deg); }
+.faq p, .faq ol{ color: var(--muted); margin:.5rem 0 0 0; }
+
+/* ---------- Pro callout reuse ---------- */
+.pro-callout .compare.mini{
+  display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:.75rem;
+}
+@media (max-width: 880px){
+  .pro-callout .compare.mini{ grid-template-columns: 1fr; }
+}
+
+/* Privacy page helpers (keeps existing design language) */
+.page-meta { margin-top:.6rem; }
+.pill{
+  display:inline-block; font-size:.85rem; font-weight:600;
+  color:#111; background: var(--gold); padding:.2rem .5rem; border-radius:999px;
+}
+
+/* Two-column layout that collapses on mobile */
+.grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+@media (max-width: 880px){ .grid-2{ grid-template-columns:1fr; } }
+
+/* Simple content lists */
+.list{ margin:.35rem 0 0 0; padding-left:1rem; color: var(--muted); display:grid; gap:.35rem; }
+.list li strong { color: var(--text); }
+
+/* More space between each FAQ item */
+.faq{ display: grid; gap: 1.1rem; }      /* was stacked with tiny margins */
+.faq details{ margin: 0; }               /* grid gap now handles spacing */
+
+/* Extra space between FAQ and the Pro section */
+.card + .pro-callout{ margin-top: 24px; } /* adds a clear break between sections */
+
+/* --- Global utility: vertical stack spacing for section groups --- */
+.stack-lg > * + * { margin-top: 18px; }      /* comfortable spacing between cards/sections */
+@media (max-width: 640px){ .stack-lg > * + * { margin-top: 16px; } }
+
+/* --- Footer links wrap nicely on mobile --- */
+.foot small { display: inline-flex; gap: .5rem; flex-wrap: wrap; }
+.foot a { color: var(--muted); }
+.foot a:hover { color: var(--text); }
+
+/* --- Mobile niceties (better wrapping & touch sizes) --- */
+.links { flex-wrap: wrap; }
+.btn, .iconbtn { min-height: 44px; }         /* Apple HIG touch target */
+@media (max-width: 880px){
+  .grid-2 { grid-template-columns: 1fr; }    /* ensure privacy two-column stacks on phones */
+  .container { width: min(100% - 24px, var(--container)); } /* a bit more side room on small screens */
+}
+
+/* ===== Apple Watch bezel variant for the screenshot carousel ===== */
+.device.device--watch{
+  /* Override the default rectangular “device” look */
+  position: relative;
+  border: none;
+  background: var(--panel);                 /* watch case */
+  border-radius: 28% / 24%;                 /* Apple Watch squircle feel */
+  padding: clamp(10px, 5.5%, 18px);         /* case rim thickness */
+  box-shadow: var(--shadow);
+  aspect-ratio: 1 / 1.25;                   /* watch-ish aspect */
+  overflow: visible;                         /* crown can hang out */
+}
+
+/* The “screen” (your image) lives inside the case opening */
+.device.device--watch > img{
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;                         /* edge-to-edge */
+  border-radius: 24% / 22%;                  /* inner glass curvature */
+  background: #000;                          /* safe backdrop for PNGs */
+}
+
+/* Subtle inner falloff against the glass edge */
+.device.device--watch::before{
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: 28% / 24%;
+  pointer-events: none;
+  /* rim + glass glow */
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.03),
+    inset 0 0 0 8px rgba(0,0,0,.55),
+    inset 0 0 44px 10px rgba(0,0,0,.55);
+  background:
+    radial-gradient(130% 130% at 18% 6%, rgba(255,255,255,.08), transparent 55%),
+    radial-gradient(130% 130% at 82% 96%, rgba(255,255,255,.03), transparent 60%);
+  mix-blend-mode: screen;
+}
+
+/* Side lighting on the metal case (very subtle) */
+.device.device--watch{
+  background:
+    radial-gradient(120% 120% at 20% 0%, #26272b, transparent 60%),
+    radial-gradient(120% 120% at 80% 100%, #000, transparent 60%),
+    var(--panel);
+}
+
+/* Digital Crown (pure CSS) */
+.device.device--watch::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  right:-7%;
+  translate: 0 -50%;
+  width: 18%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(55% 55% at 50% 50%, #1a1b1f 0 60%, transparent 61%),
+    linear-gradient(135deg, #2f3034, #0b0c0e);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.04),
+    0 6px 12px rgba(0,0,0,.35);
+}
+
+/* Optional: crown ridges hint using a mask (keeps single-element crown) */
+@supports (mask: radial-gradient(#000,transparent)){
+  .device.device--watch::after{
+    mask:
+      radial-gradient(closest-side, #000 65%, transparent 66%),
+      repeating-radial-gradient(circle at 50% 50%, #000 0 2px, transparent 2px 4px);
+    mask-composite: exclude;
+    -webkit-mask:
+      radial-gradient(closest-side, #000 65%, transparent 66%),
+      repeating-radial-gradient(circle at 50% 50%, #000 0 2px, transparent 2px 4px);
+    -webkit-mask-composite: xor;
+  }
+}
+
+/* Tweak spacing so watch items feel centered */
+.shot-strip .device.device--watch{
+  scroll-snap-align: start;
+  background-clip: padding-box;
+}
