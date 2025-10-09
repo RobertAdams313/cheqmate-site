@@ -1,5 +1,6 @@
 /* ==============  Design tokens  ============== */
-:root{
+:root {
+  color-scheme: dark; /* 🔒 Force dark mode across browsers and form controls */
   --bg: #0b0b0c;
   --bg-soft: #111114;
   --panel: #15161a;
@@ -14,18 +15,6 @@
   --container: 1120px;
 }
 
-/* Light mode */
-@media (prefers-color-scheme: light){
-  :root{
-    --bg: #fafafa;
-    --bg-soft: #f5f6f8;
-    --panel: #ffffff;
-    --text: #111214;
-    --muted: #5d6067;
-    --line: rgba(0,0,0,0.08);
-    --shadow: 0 8px 32px rgba(0,0,0,0.08);
-  }
-}
 
 /* ==============  Base  ============== */
 *{ box-sizing: border-box; }
