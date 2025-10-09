@@ -657,3 +657,17 @@ img{ max-width:100%; height:auto; display:block; }
 
 /* remove the crown */
 .device.device--watch::after{ content:none !important; }
+
+/* ==== Screenshot devices: thinner bezel (non-watch items) ==== */
+.shot-strip .device:not(.device--watch){
+  padding: clamp(4px, 2%, 8px);          /* was 10px – slimmer wall */
+  border-radius: 16px;                   /* was 22px – tighter corners */
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  box-shadow: var(--shadow);
+  background: var(--panel);
+}
+
+/* Keep the screen rounding proportional to the slimmer case */
+.shot-strip .device:not(.device--watch) > img{
+  border-radius: 12px;                   /* was 14px */
+}
