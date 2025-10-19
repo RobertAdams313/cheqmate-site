@@ -201,16 +201,18 @@
     const lb = document.getElementById('lightbox');
     const img = document.getElementById('lightboxImg');
     const counter = lb.querySelector('.lightbox__counter');
+    const prevBtn = lb.querySelector('.lightbox__prev');
+    const nextBtn = lb.querySelector('.lightbox__next');
 
     let idx = 0;
     let lastScroll = '';
 
     const open = (i) => {
-      idx = i;
-      update();
+      idx = i; update();
       lastScroll = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       lb.setAttribute('aria-hidden', 'false');
+      nextBtn.focus({preventScroll:true});
     };
 
     const close = () => {
