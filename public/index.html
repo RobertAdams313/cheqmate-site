@@ -91,18 +91,18 @@
 
       <div class="shot-strip" id="shotStrip" aria-label="App screenshots">
         <!-- iPhone/iPad app screenshots -->
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/plan.png" alt="Plan view"></figure>
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/income.png" alt="Income view"></figure>
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/bills.png" alt="Bills list"></figure>
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/insights.png" alt="Insights overview"></figure>
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/insights-more.png" alt="More insights detail"></figure>
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/insights3.png" alt="Insights breakdowns"></figure>
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/settings.png" alt="Settings"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/plan.png" alt="Plan view"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/income.png" alt="Income view"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/bills.png" alt="Bills list"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/insights.png" alt="Insights overview"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/insights-more.png" alt="More insights detail"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/insights3.png" alt="Insights breakdowns"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/settings.png" alt="Settings"></figure>
 
         <!-- watchOS screenshots -->
-        <figure class="device device--watch"><img loading="lazy" src="/assets/screenshots/watch.png" alt="Apple Watch app"></figure>
-        <figure class="device device--watch"><img loading="lazy" src="/assets/screenshots/watch-comp.png" alt="Apple Watch complications"></figure>
-        <figure class="device device--watch"><img loading="lazy" src="/assets/screenshots/watch-widgets.png" alt="watchOS widgets"></figure>
+        <figure class="device device--watch"><img loading="lazy" decoding="async" src="/assets/screenshots/watch.png" alt="Apple Watch app"></figure>
+        <figure class="device device--watch"><img loading="lazy" decoding="async" src="/assets/screenshots/watch-comp.png" alt="Apple Watch complications"></figure>
+        <figure class="device device--watch"><img loading="lazy" decoding="async" src="/assets/screenshots/watch-widgets.png" alt="watchOS widgets"></figure>
       </div>
 
       <div class="strip-controls">
@@ -181,5 +181,99 @@
       <small>© 2025 CheqMate • <a href="/privacy/">Privacy</a> • <a href="/terms/">Terms</a></small>
     </div>
   </footer>
+
+  <!-- ========= Lightbox Markup ========= -->
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <div class="lightbox__backdrop" data-action="close" aria-hidden="true"></div>
+    <img id="lightboxImg" class="lightbox__img" alt="">
+    <button class="lightbox__btn lightbox__prev" aria-label="Previous (←)" data-action="prev">‹</button>
+    <button class="lightbox__btn lightbox__next" aria-label="Next (→)" data-action="next">›</button>
+    <button class="lightbox__btn lightbox__close" aria-label="Close (Esc)" data-action="close">✕</button>
+    <div class="lightbox__counter" aria-live="polite" aria-atomic="true">1 / 1</div>
+  </div>
+
+  <!-- ========= Lightbox Script (no deps) ========= -->
+  <script>
+  (() => {
+    const gallery = Array.from(document.querySelectorAll('.shot-strip img'));
+    if (!gallery.length) return;
+
+    const lb = document.getElementById('lightbox');
+    const img = document.getElementById('lightboxImg');
+    const counter = lb.querySelector('.lightbox__counter');
+    const prevBtn = lb.querySelector('.lightbox__prev');
+    const nextBtn = lb.querySelector('.lightbox__next');
+
+    let idx = 0;
+    let lastScroll = '';
+
+    const open = (i) => {
+      idx = i; update();
+      lastScroll = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      lb.setAttribute('aria-hidden', 'false');
+      nextBtn.focus({preventScroll:true});
+    };
+
+    const close = () => {
+      lb.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = lastScroll || '';
+      img.removeAttribute('src');
+      img.removeAttribute('alt');
+    };
+
+    const update = () => {
+      const el = gallery[idx];
+      img.src = el.currentSrc || el.src;
+      img.alt = el.alt || 'Screenshot';
+      counter.textContent = (idx + 1) + ' / ' + gallery.length;
+    };
+
+    const prev = () => { idx = (idx - 1 + gallery.length) % gallery.length; update(); };
+    const next = () => { idx = (idx + 1) % gallery.length; update(); };
+
+    // Click to open
+    document.addEventListener('click', (e) => {
+      const t = e.target.closest('.shot-strip img');
+      if (!t) return;
+      const i = gallery.indexOf(t);
+      if (i !== -1) open(i);
+    });
+
+    // Lightbox buttons / backdrop
+    lb.addEventListener('click', (e) => {
+      const action = e.target.getAttribute('data-action');
+      if (!action) return;
+      if (action === 'prev') prev();
+      else if (action === 'next') next();
+      else if (action === 'close') close();
+    });
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      if (lb.getAttribute('aria-hidden') === 'true') return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') prev();
+      else if (e.key === 'ArrowRight') next();
+    });
+
+    // Basic swipe support
+    let touchX = null, touchY = null;
+    lb.addEventListener('touchstart', (e) => {
+      const t = e.changedTouches[0];
+      touchX = t.clientX; touchY = t.clientY;
+    }, {passive:true});
+    lb.addEventListener('touchend', (e) => {
+      if (touchX === null) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - touchX;
+      const dy = t.clientY - touchY;
+      touchX = touchY = null;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
+        (dx > 0 ? prev : next)();
+      }
+    }, {passive:true});
+  })();
+  </script>
 </body>
 </html>
