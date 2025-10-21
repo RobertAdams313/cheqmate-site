@@ -15,7 +15,6 @@
   --container: 1120px;
 }
 
-
 /* ==============  Base  ============== */
 *{ box-sizing: border-box; }
 html,body{ height:100%; }
@@ -228,7 +227,7 @@ img{ max-width:100%; height:auto; display:block; }
 }
 
 /* Two-column layout that collapses on mobile */
-.grid-2{ display:grid; grid-template-columns: 1 fr 1fr; gap:16px; }
+.grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; } /* fixed: '1 fr' -> '1fr' */
 @media (max-width: 880px){ .grid-2{ grid-template-columns:1fr; } }
 
 /* Simple content lists */
@@ -315,18 +314,26 @@ img{ max-width:100%; height:auto; display:block; }
   opacity: 1;
   pointer-events: auto;
 }
+
 .lightbox__backdrop {
   grid-area: main;
-  position: absolute; inset: 0;
+  position: absolute;
+  inset: 0;
   background: rgba(0,0,0,.78);
   backdrop-filter: blur(8px);
+  z-index: 0; /* ensure backdrop behind image/controls */
 }
+
 .lightbox__img {
   grid-area: main;
   max-width: 92vw;
   max-height: 90vh;
   border-radius: 14px;
   box-shadow: 0 0 40px rgba(0,0,0,.5);
+  background: #000;
+  object-fit: contain;  /* no cropping */
+  position: relative;
+  z-index: 2;          /* above backdrop */
 }
 
 /* Controls */
@@ -343,6 +350,7 @@ img{ max-width:100%; height:auto; display:block; }
   cursor: pointer;
   user-select: none;
   touch-action: manipulation;
+  z-index: 3; /* top-most */
 }
 .lightbox__btn:hover { filter: brightness(1.08); }
 .lightbox__btn:active { transform: scale(.98); }
@@ -352,6 +360,7 @@ img{ max-width:100%; height:auto; display:block; }
   top: 16px; right: 16px; translate: 0 0;
   width: 42px; height: 42px;
 }
+
 .lightbox__counter {
   position: absolute;
   bottom: 16px; left: 50%; translate: -50% 0;
@@ -361,6 +370,7 @@ img{ max-width:100%; height:auto; display:block; }
   background: color-mix(in srgb, var(--panel) 85%, transparent);
   border: 1px solid var(--line);
   color: var(--muted);
+  z-index: 3;
 }
 
 /* Reduce Motion */
