@@ -17,8 +17,8 @@ Stay ahead of bills, track your money, and gain clarity with simple paycheck‑b
 ---
 
 ## 📱 Platform Support
-- iOS 18.6+ (iPhone)
-- watchOS 11+ (Apple Watch app + complication)
+- iOS 26+ (iPhone)
+- watchOS 26+ (Apple Watch app + complication)
 
 ---
 
@@ -28,5 +28,6 @@ Stay ahead of bills, track your money, and gain clarity with simple paycheck‑b
 ---
 
 ## 📬 Contact
-- Email: [CheqMateiOS@gmail.com](mailto:CheqMateiOS@gmail.com)
+- Email: [CheqMateiOS@gmail.com](mailto:support@CheqMateiOS.app)
 - Repo: [github.com/RobertAdams313/CheqMate](https://github.com/RobertAdams313/CheqMate)
+
