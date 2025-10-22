@@ -75,8 +75,10 @@
         </div>
       </div>
 
-      <figure class="hero-art">
-        <img class="hero-mark" src="/assets/img/cheqmate-mark-1024-transparent.png" alt="CheqMate mark">
+      <!-- ✅ Layered iPhone + Watch hero art -->
+      <figure class="hero-art hero-devices" aria-label="CheqMate on iPhone and Apple Watch">
+        <img class="device-iphone" src="/assets/screenshots/insights-more.png" alt="CheqMate Insights screen">
+        <img class="device-watch" src="/assets/screenshots/watch.png" alt="CheqMate Apple Watch view">
       </figure>
     </div>
   </section>
@@ -91,18 +93,18 @@
 
       <div class="shot-strip" id="shotStrip" aria-label="App screenshots">
         <!-- iPhone/iPad app screenshots -->
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/plan.png" alt="Plan view"></figure>
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/income.png" alt="Income view"></figure>
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/bills.png" alt="Bills list"></figure>
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/insights.png" alt="Insights overview"></figure>
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/insights-more.png" alt="More insights detail"></figure>
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/insights3.png" alt="Insights breakdowns"></figure>
-        <figure class="device"><img loading="lazy" src="/assets/screenshots/settings.png" alt="Settings"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/plan.png" alt="Plan view"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/income.png" alt="Income view"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/bills.png" alt="Bills list"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/insights.png" alt="Insights overview"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/insights-more.png" alt="More insights detail"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/insights3.png" alt="Insights breakdowns"></figure>
+        <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/settings.png" alt="Settings"></figure>
 
         <!-- watchOS screenshots -->
-        <figure class="device device--watch"><img loading="lazy" src="/assets/screenshots/watch.png" alt="Apple Watch app"></figure>
-        <figure class="device device--watch"><img loading="lazy" src="/assets/screenshots/watch-comp.png" alt="Apple Watch complications"></figure>
-        <figure class="device device--watch"><img loading="lazy" src="/assets/screenshots/watch-widgets.png" alt="watchOS widgets"></figure>
+        <figure class="device device--watch"><img loading="lazy" decoding="async" src="/assets/screenshots/watch.png" alt="Apple Watch app"></figure>
+        <figure class="device device--watch"><img loading="lazy" decoding="async" src="/assets/screenshots/watch-comp.png" alt="Apple Watch complications"></figure>
+        <figure class="device device--watch"><img loading="lazy" decoding="async" src="/assets/screenshots/watch-widgets.png" alt="watchOS widgets"></figure>
       </div>
 
       <div class="strip-controls">
@@ -181,5 +183,69 @@
       <small>© 2025 CheqMate • <a href="/privacy/">Privacy</a> • <a href="/terms/">Terms</a></small>
     </div>
   </footer>
+
+  <!-- ========= Lightbox Markup ========= -->
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <div class="lightbox__backdrop" data-action="close" aria-hidden="true"></div>
+    <img id="lightboxImg" class="lightbox__img" alt="">
+    <button class="lightbox__btn lightbox__prev" aria-label="Previous (←)" data-action="prev">‹</button>
+    <button class="lightbox__btn lightbox__next" aria-label="Next (→)" data-action="next">›</button>
+    <button class="lightbox__btn lightbox__close" aria-label="Close (Esc)" data-action="close">✕</button>
+    <div class="lightbox__counter" aria-live="polite" aria-atomic="true">1 / 1</div>
+  </div>
+
+  <!-- ========= Lightbox Script ========= -->
+  <script>
+  (() => {
+    const gallery = Array.from(document.querySelectorAll('.shot-strip img'));
+    if (!gallery.length) return;
+    const lb = document.getElementById('lightbox');
+    const img = document.getElementById('lightboxImg');
+    const counter = lb.querySelector('.lightbox__counter');
+    let idx = 0;
+    let lastScroll = '';
+
+    const open = (i) => {
+      idx = i;
+      update();
+      lastScroll = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      lb.setAttribute('aria-hidden', 'false');
+    };
+    const close = () => {
+      lb.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = lastScroll || '';
+      img.removeAttribute('src');
+    };
+    const update = () => {
+      const el = gallery[idx];
+      img.src = el.currentSrc || el.src;
+      img.alt = el.alt || 'Screenshot';
+      counter.textContent = (idx + 1) + ' / ' + gallery.length;
+    };
+    const prev = () => { idx = (idx - 1 + gallery.length) % gallery.length; update(); };
+    const next = () => { idx = (idx + 1) % gallery.length; update(); };
+
+    document.addEventListener('click', e => {
+      const t = e.target.closest('.shot-strip img');
+      if (!t) return;
+      const i = gallery.indexOf(t);
+      if (i !== -1) open(i);
+    });
+    lb.addEventListener('click', e => {
+      const a = e.target.getAttribute('data-action');
+      if (!a) return;
+      if (a === 'prev') prev();
+      else if (a === 'next') next();
+      else if (a === 'close') close();
+    });
+    document.addEventListener('keydown', e => {
+      if (lb.getAttribute('aria-hidden') === 'true') return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') prev();
+      else if (e.key === 'ArrowRight') next();
+    });
+  })();
+  </script>
 </body>
 </html>
