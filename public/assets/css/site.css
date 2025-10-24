@@ -574,3 +574,24 @@ img{ max-width:100%; height:auto; display:block; }
     border-top: 1px solid var(--line);
   }
 }
+
+/* ===============================
+   Press page spacing parity
+   =============================== */
+
+/* Desktop/tablet: a bit more horizontal air between the two cards */
+.grid-split{
+  column-gap: 32px;            /* was ~16–20px; matches site rhythm */
+}
+
+/* When the cards stack, add big vertical gap + subtle divider (like Support) */
+@media (max-width: 980px){
+  .grid-split{
+    grid-template-columns: 1fr;
+    row-gap: 72px;             /* same 72px breathing room */
+  }
+  .grid-split > * + *{
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+}
