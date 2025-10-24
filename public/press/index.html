@@ -9,6 +9,10 @@
   <meta property="og:image" content="https://cheqmateios.app/assets/img/og-cheqmate.png">
   <link rel="stylesheet" href="/assets/css/site.css">
   <link rel="icon" type="image/png" href="/assets/img/cheqmate-mark-1024-transparent.png">
+
+  <!-- Native Smart App Banner (Safari on iOS) -->
+  <meta name="apple-itunes-app" content="app-id=6751434695, app-argument=cheqmate://">
+
   <script defer src="/assets/js/site.js"></script>
 </head>
 <body>
@@ -19,13 +23,38 @@
         <span class="brand-text">CheqMate</span>
       </a>
       <nav class="links">
-        <a href="/">Home</a>
+        <a href="/#features">Features</a>
+        <a href="/#pro">Pro</a>
         <a href="/support/">Support</a>
         <a href="/press/">Press</a>
         <a class="btn small testflight" href="/testflight/" target="_blank" rel="noopener">Test on TestFlight</a>
+        <a class="appstore-badge-nav"
+           href="https://apps.apple.com/us/app/cheqmate-paycheck-planner/id6751434695"
+           target="_blank" rel="noopener" aria-label="Download on the App Store"
+           style="display:inline-block; vertical-align:middle; margin-left:8px;">
+          <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=120x40&amp;releaseDate=1728950400"
+               alt="Download on the App Store" height="28" style="height:28px;">
+        </a>
       </nav>
     </div>
   </header>
+
+  <!-- Smart Banner (custom) – sits under sticky header -->
+  <div id="smartbanner" class="smartbanner" aria-hidden="true">
+    <div class="container smartbanner__inner">
+      <img src="/assets/img/cheqmate-mark-1024-transparent.png" alt="" class="smartbanner__icon" width="40" height="40">
+      <div class="smartbanner__text">
+        <strong class="smartbanner__title">CheqMate</strong>
+        <span class="smartbanner__subtitle">Plan every paycheck</span>
+        <span class="smartbanner__hint">Free • iOS 26+</span>
+      </div>
+      <div class="smartbanner__actions">
+        <a href="#" class="btn small smartbanner__open" data-action="open">Open</a>
+        <a href="#" class="btn small smartbanner__get" data-action="get">Get</a>
+      </div>
+      <button type="button" class="smartbanner__close" aria-label="Close banner">×</button>
+    </div>
+  </div>
 
   <section class="page-hero">
     <div class="container">
@@ -36,8 +65,7 @@
 
   <main class="page">
     <div class="container">
-      <div class="grid-split">
-        <!-- Left: Brand usage (no images) -->
+      <div class="grid-split support-section">
         <section class="card">
           <h2>Brand usage</h2>
           <ul class="list">
@@ -50,20 +78,18 @@
           </ul>
         </section>
 
-        <!-- Right: Direct downloads only -->
         <aside class="card">
           <h2>Downloads</h2>
           <ul class="downloads-list">
-            <!-- Transparent first -->
             <li><a href="/assets/img/cheqmate-mark-1024-transparent.png" download>Mark — 1024×1024 (PNG, transparent)</a></li>
             <li><a href="/assets/img/cheqmate-wordmark-1024x512-transparent.png" download>Wordmark — 1024×512 (PNG, transparent)</a></li>
-            <!-- Optional opaque versions -->
             <li><a href="/assets/img/cheqmate-mark-1024.png" download>Mark — 1024×1024 (PNG, opaque)</a></li>
             <li><a href="/assets/img/cheqmate-wordmark-1024x512.png" download>Wordmark — 1024×512 (PNG, opaque)</a></li>
-            <!-- Optional OG image for articles -->
             <li><a href="/assets/img/og-cheqmate.png" download>Open Graph image (PNG)</a></li>
           </ul>
-          <p class="muted" style="margin-top:.5rem">Need another format or size? Contact us via <a href="/support/">Support</a>.</p>
+          <p class="muted" style="margin-top:.5rem">
+            Need another format or size? Email <a href="mailto:support@cheqmateios.app" rel="noopener">support@cheqmateios.app</a>.
+          </p>
         </aside>
       </div>
     </div>

@@ -14,6 +14,10 @@
   <meta property="og:image" content="https://cheqmateios.app/assets/img/og-cheqmate.png">
   <link rel="apple-touch-icon" href="/assets/img/cheqmate-mark-1024-transparent.png">
   <link rel="icon" type="image/png" href="/assets/img/cheqmate-mark-1024-transparent.png">
+
+  <!-- Native Smart App Banner (iOS Safari) -->
+  <meta name="apple-itunes-app" content="app-id=6751434695, app-argument=cheqmate://">
+
   <script defer src="/assets/js/site.js"></script>
 </head>
 <body>
@@ -41,10 +45,27 @@
             alt="Download on the App Store"
             height="28"
             style="height:28px;">
-        </a>
+          </a>
       </nav>
     </div>
   </header>
+
+  <!-- Smart Banner (custom) – sits under sticky header -->
+  <div id="smartbanner" class="smartbanner" aria-hidden="true">
+    <div class="container smartbanner__inner">
+      <img src="/assets/img/cheqmate-mark-1024-transparent.png" alt="" class="smartbanner__icon" width="40" height="40">
+      <div class="smartbanner__text">
+        <strong class="smartbanner__title">CheqMate</strong>
+        <span class="smartbanner__subtitle">Plan every paycheck</span>
+        <span class="smartbanner__hint">Free • iOS 26+</span>
+      </div>
+      <div class="smartbanner__actions">
+        <a href="#" class="btn small smartbanner__open" data-action="open">Open</a>
+        <a href="#" class="btn small smartbanner__get" data-action="get">Get</a>
+      </div>
+      <button type="button" class="smartbanner__close" aria-label="Close banner">×</button>
+    </div>
+  </div>
 
   <!-- Hero -->
   <section class="hero">
@@ -92,7 +113,6 @@
       </div>
 
       <div class="shot-strip" id="shotStrip" aria-label="App screenshots">
-        <!-- iPhone/iPad app screenshots -->
         <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/plan.png" alt="Plan view"></figure>
         <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/income.png" alt="Income view"></figure>
         <figure class="device"><img loading="lazy" decoding="async" src="/assets/screenshots/bills.png" alt="Bills list"></figure>

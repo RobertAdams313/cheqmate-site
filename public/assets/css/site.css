@@ -487,3 +487,68 @@ img{ max-width:100%; height:auto; display:block; }
   .page .container > :where(section) + :where(section) { margin-top: 56px; }
   .pro-callout { margin-top: 64px; padding-top: 24px; }
 }
+
+/* ===============================
+   Smart Banner (Custom)
+   =============================== */
+.smartbanner{
+  position: sticky;
+  top: 0;                    /* sits under your sticky header */
+  z-index: 19;               /* header is 20; keep banner just beneath to avoid overlap */
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: saturate(1.05) blur(8px);
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .25s ease, opacity .25s ease;
+}
+.smartbanner.show{
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.smartbanner__inner{
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+}
+.smartbanner__icon{
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  background: #000;
+}
+.smartbanner__text{ line-height: 1.15; }
+.smartbanner__title{ display:block; font-weight: 800; }
+.smartbanner__subtitle{ display:block; color: var(--muted); font-size: .95rem; }
+.smartbanner__hint{ display:block; color: var(--muted); font-size: .85rem; }
+
+.smartbanner__actions{ display:flex; gap: .5rem; }
+.smartbanner__actions .btn.small{ padding: .45rem .7rem; }
+.smartbanner__open{ background: var(--panel); border-color: var(--line); }
+.smartbanner__get{ background: var(--blue); border-color: transparent; color: #fff; font-weight: 700; }
+
+.smartbanner__close{
+  appearance: none;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
+  color: var(--muted);
+  border-radius: 8px;
+  width: 30px; height: 30px;
+  display: grid; place-items: center;
+  font-size: 20px; line-height: 1;
+}
+.smartbanner__close:hover{ filter: brightness(1.08); }
+
+@media (max-width: 880px){
+  .smartbanner__inner{
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+  }
+  .smartbanner__actions{ gap: .4rem; }
+  .smartbanner__subtitle{ display:none; }
+}
