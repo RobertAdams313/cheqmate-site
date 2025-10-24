@@ -230,10 +230,13 @@ img{ max-width:100%; height:auto; display:block; }
   align-items:center;
   justify-content:center;
   perspective:1200px;
+
+  /* ↓ Added offset so the bottoms align with the TestFlight/App Store buttons */
+  margin-top:44px;
 }
 .device-iphone{
   position:absolute;
-  inset:auto 6% 4% auto;
+  inset:auto 6% 0 auto; /* bottom lowered from 4% → 0 */
   width:min(360px,70%);
   border-radius:28px;
   box-shadow:
@@ -246,7 +249,7 @@ img{ max-width:100%; height:auto; display:block; }
 }
 .device-watch{
   position:absolute;
-  inset:auto auto 0 0;
+  inset:auto auto -10px 0; /* bottom lowered slightly for visual symmetry */
   width:min(180px,36%);
   aspect-ratio:1/1.25;
   border-radius:24%/22%;
@@ -288,12 +291,23 @@ img{ max-width:100%; height:auto; display:block; }
   }
 }
 
+/* ===== Alignment tuning at common breakpoints ===== */
+@media (max-width:1200px){
+  .hero-devices{ margin-top:32px; }
+  .device-watch{ inset:auto auto -6px 0; }
+}
+@media (max-width:1024px){
+  .hero-devices{ margin-top:24px; }
+  .device-watch{ inset:auto auto -4px 0; }
+}
+
 /* Mobile fallback */
 @media (max-width:880px){
   .hero-devices{
     aspect-ratio:auto;
     flex-direction:column;
     gap:1rem;
+    margin-top:0; /* remove desktop offset on small screens */
   }
   .device-iphone,
   .device-watch{
