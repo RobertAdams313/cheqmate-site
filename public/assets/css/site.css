@@ -422,3 +422,23 @@ img{ max-width:100%; height:auto; display:block; }
     transform:none !important;
   }
 }
+
+/* ==== Hero device vertical alignment override (to red line) ==== */
+:root{
+  --hero-devices-shift: 140px; /* ↑ increase/decrease to nudge the whole stack */
+}
+
+@media (min-width: 881px){
+  .hero-devices{
+    margin-top: var(--hero-devices-shift) !important;
+  }
+  .device-iphone{
+    inset: auto 6% -36px auto !important; /* lower iPhone a bit more */
+  }
+  .device-watch{
+    inset: auto auto -56px 0 !important;  /* lower Watch slightly below iPhone */
+  }
+}
+
+/* keep mobile unchanged */
+
