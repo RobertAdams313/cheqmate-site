@@ -425,7 +425,7 @@ img{ max-width:100%; height:auto; display:block; }
 
 /* ==== Hero device vertical alignment override (to red line) ==== */
 :root{
-  --hero-devices-shift: 140px; /* ↑ increase/decrease to nudge the whole stack */
+  --hero-devices-shift: 170px; /* ↑ increase/decrease to nudge the whole stack */
 }
 
 @media (min-width: 881px){
