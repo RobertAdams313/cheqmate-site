@@ -442,3 +442,48 @@ img{ max-width:100%; height:auto; display:block; }
 
 /* keep mobile unchanged */
 
+/* ===============================
+   Support page spacing + contact
+   =============================== */
+
+/* Breathing room between page sections on Support only */
+.page .container > :where(section) + :where(section) {
+  margin-top: 72px;               /* ↑ main spacing between sections */
+}
+
+/* Subtle divider for sectional clarity */
+.support-section {
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+/* FAQ item spacing for easier scanning */
+.faq details { margin: 0 0 16px 0; }
+.faq details:last-child { margin-bottom: 0; }
+
+/* Email callout under hero title */
+.support-contact {
+  margin-top: 12px;
+  color: var(--muted);
+}
+.support-contact .support-email {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.support-contact .support-email:hover {
+  filter: brightness(1.08);
+}
+
+/* Extra air before the Pro comparison block */
+.pro-callout {
+  margin-top: 80px;               /* keeps it roomy even if structure changes */
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+
+/* Responsive tuning: slightly tighter on small screens */
+@media (max-width: 880px) {
+  .page .container > :where(section) + :where(section) { margin-top: 56px; }
+  .pro-callout { margin-top: 64px; padding-top: 24px; }
+}
