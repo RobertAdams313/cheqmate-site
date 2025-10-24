@@ -146,3 +146,7 @@
     window.addEventListener("DOMContentLoaded", showBanner, { once: true });
   }
 })();
+
+window.addEventListener("scroll", () => {
+  document.body.classList.toggle("scrolled", window.scrollY > 4);
+});
