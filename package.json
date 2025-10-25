@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.19.23",
+    "@vercel/node": "^5.5.0",
     "eslint": "^9.11.0",
     "prettier": "^3.3.3",
     "tsx": "^4.20.6",
