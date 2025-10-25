@@ -1,118 +1,115 @@
-// api/_handlers/ai/rewrite.ts
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-type IncomingItem = { index: number; title?: string; current: string };
-type OutgoingItem = { index: number; rewritten: string };
+type InItem = { index: number; current: string; title?: string };
+type OutItem = { index: number; rewritten: string };
 
-const OPENAI_URL = "https://api.openai.com/v1/chat/completions";
-
-function requireBearer(req: VercelRequest): void {
-  const auth = req.headers.authorization || "";
-  const token = auth.startsWith("Bearer ") ? auth.slice(7).trim() : "";
-  if (!token) throw Object.assign(new Error("Missing bearer."), { status: 401 });
-
-  const allowed = (process.env.CHEQMATE_BEARERS || "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  if (allowed.length > 0 && !allowed.includes(token)) {
-    throw Object.assign(new Error("Unauthorized bearer."), { status: 401 });
-  }
+function bad(res: VercelResponse, code: number, msg: string) {
+  return res.status(code).json({ error: msg });
 }
 
-const rl = new Map<string, { n: number; t: number }>();
-function rateLimit(req: VercelRequest) {
-  const key =
-    (req.headers["x-forwarded-for"] as string) ||
-    req.socket.remoteAddress ||
-    "unknown";
-  const now = Date.now();
-  const bucket = rl.get(key) || { n: 0, t: now };
-  if (now - bucket.t > 60_000) {
-    bucket.n = 0;
-    bucket.t = now;
-  }
-  bucket.n += 1;
-  rl.set(key, bucket);
-  const max = Number(process.env.RATE_PER_MINUTE || 60);
-  if (bucket.n > max) throw Object.assign(new Error("Rate limit."), { status: 429 });
-}
-
-function model(): string {
-  return process.env.OPENAI_MODEL || "gpt-4o-mini";
-}
-
-export default async function handleAiRewrite(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
+    // Method guard
+    if (req.method !== 'POST') {
+      res.setHeader('Allow', 'POST');
+      return bad(res, 405, 'Method Not Allowed');
+    }
 
-    requireBearer(req);
-    rateLimit(req);
+    // Auth (require any Bearer token you issue to the app)
+    const auth = req.headers['authorization'];
+    if (!auth || !auth.toString().startsWith('Bearer ')) {
+      return bad(res, 401, 'Missing or invalid Authorization header');
+    }
+    // TODO: Optionally verify token value here.
 
-    const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-    const items: IncomingItem[] = Array.isArray(body?.items) ? body.items : [];
-    if (items.length === 0) return res.status(400).json({ error: "No items provided." });
+    // Parse body (handle string vs object)
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    if (!body || !Array.isArray(body.items)) {
+      return bad(res, 400, 'Body must be {"items":[{"index":number,"current":string}]}');
+    }
 
+    const items: InItem[] = body.items.map((i: any) => ({
+      index: Number(i?.index),
+      current: String(i?.current ?? ''),
+      title: i?.title ? String(i.title) : undefined,
+    }));
+
+    // Quick input validation
+    if (items.some(i => !Number.isFinite(i.index) || !i.current)) {
+      return bad(res, 400, 'Each item requires numeric "index" and non-empty "current"');
+    }
+
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      // Don’t throw—return a clear server misconfig message.
+      return bad(res, 500, 'Server missing OPENAI_API_KEY');
+    }
+
+    // Compose prompt for a *batched* JSON-only rewrite
     const system = [
-      "You rewrite short financial tips into one concise, actionable sentence (8–140 chars).",
-      "Avoid judgment, emojis, or personal data. Keep concrete and specific.",
-      "Return ONLY valid JSON: {\"items\":[{\"index\":0,\"rewritten\":\"...\"}]}"
-    ].join(" ");
+      'You rewrite short financial tips as one concise, actionable sentence (8–140 chars).',
+      'No emojis, no personal data, no moralizing, no multi-step plans.',
+      'Return ONLY valid JSON: {"items":[{"index":0,"rewritten":"..."}]}',
+    ].join(' ');
 
-    const user = JSON.stringify({
-      items: items.map(({ index, title, current }) => ({ index, title, current })),
+    const userPayload = JSON.stringify({
+      items: items.map(i => ({ index: i.index, current: i.current, title: i.title })),
       rules: [
-        "One sentence, 8–140 chars.",
-        "Must include an action/verb.",
-        "No identifiers or scores.",
-        "JSON shape exactly: {items:[{index,rewritten}]}"
+        'One sentence, 8–140 chars.',
+        'Action-oriented wording.',
+        'Neutral, specific, concrete.',
+        'Only JSON output with {index, rewritten}.'
       ]
     });
 
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) return res.status(500).json({ error: "Server missing OPENAI_API_KEY" });
+    const bodyReq = {
+      model: 'gpt-4o-mini',
+      temperature: 0.3,
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content: userPayload }
+      ]
+    };
 
-    const r = await fetch(OPENAI_URL, {
-      method: "POST",
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
       },
-      body: JSON.stringify({
-        model: model(),
-        temperature: 0.3,
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: user }
-        ]
-      }),
-      signal: AbortSignal.timeout(15_000)
+      body: JSON.stringify(bodyReq),
     });
 
-    const data = await r.json();
-    if (!r.ok) {
-      const msg = typeof data === "object" ? JSON.stringify(data) : String(data);
-      return res.status(r.status).json({ error: `OpenAI error: ${msg}` });
+    const text = await resp.text();
+    if (!resp.ok) {
+      // Surface upstream error text for faster debugging
+      return bad(res, resp.status, `OpenAI error: ${text.slice(0, 500)}`);
     }
 
-    const content: string = data?.choices?.[0]?.message?.content ?? "";
-    let parsed: { items: OutgoingItem[] } = { items: [] };
+    type Choice = { message?: { content?: string } };
+    const parsed = JSON.parse(text) as { choices?: Choice[] };
+    const content = parsed.choices?.[0]?.message?.content ?? '';
+    let modelJson: any;
     try {
-      parsed = JSON.parse(content);
-      if (!Array.isArray(parsed.items)) throw new Error("invalid items");
+      modelJson = JSON.parse(content);
     } catch {
-      return res.status(502).json({ error: "Bad model output", raw: content });
+      return bad(res, 502, 'Model did not return valid JSON content');
     }
 
-    const cleaned = parsed.items
-      .filter((it) => Number.isInteger(it.index) && typeof it.rewritten === "string")
-      .map((it) => ({ index: it.index, rewritten: it.rewritten.trim() }))
-      .filter((it) => it.rewritten.length >= 8 && it.rewritten.length <= 140);
+    const outItems: OutItem[] = Array.isArray(modelJson.items)
+      ? modelJson.items.map((x: any) => ({ index: Number(x?.index), rewritten: String(x?.rewritten ?? '') }))
+      : [];
 
-    return res.status(200).json({ items: cleaned });
+    // Keep array length & indices consistent with input (fill-through)
+    const byIdx = new Map(outItems.map(i => [i.index, i.rewritten]));
+    const merged: OutItem[] = items.map(i => ({
+      index: i.index,
+      rewritten: (byIdx.get(i.index) || i.current).toString().trim()
+    }));
+
+    return res.status(200).json({ items: merged });
   } catch (err: any) {
-    const code = err?.status ?? 500;
-    return res.status(code).json({ error: err?.message ?? "Server error" });
+    console.error('rewrite handler error', err);
+    return bad(res, 500, 'Internal error');
   }
 }

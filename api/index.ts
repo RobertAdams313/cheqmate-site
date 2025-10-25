@@ -1,19 +1,23 @@
-// api/index.ts - tiny method+path router for Vercel serverless
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-import handleAiRewrite from "./_handlers/ai/rewrite";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import handleAiRewrite from './_handlers/ai/rewrite';
 
-type Handler = (req: VercelRequest, res: VercelResponse) => Promise<any> | any;
+type Handler = (req: VercelRequest, res: VercelResponse) => Promise<any>|any;
 
 const routes: Record<string, Handler> = {
-  "POST /ai/rewrite": handleAiRewrite
+  'POST /ai/rewrite': handleAiRewrite,
 };
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const method = (req.method || "GET").toUpperCase();
-  const url = new URL(req.url || "/", "https://local");
-  const path = url.pathname.replace(/^\/api/, "") || "/";
-  const key = `${method} ${path}`;
-  const h = routes[key];
-  if (h) return h(req, res);
-  return res.status(404).json({ error: "Not found", routeTried: key });
+export default async function main(req: VercelRequest, res: VercelResponse) {
+  try {
+    const key = `${req.method?.toUpperCase()} ${req.url?.split('?')[0].replace(/^\/api/, '')}`;
+    const h = routes[key];
+    if (!h) {
+      res.setHeader('Allow', 'POST');
+      return res.status(404).json({ error: `No route for ${key}` });
+    }
+    return await h(req, res);
+  } catch (e: any) {
+    console.error('api/index error', e);
+    return res.status(500).json({ error: 'Internal error' });
+  }
 }
