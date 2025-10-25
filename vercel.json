@@ -1,6 +1,5 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.ts" },
-    { "source": "/plaid/return", "destination": "/api/index.ts" }
+    { "source": "/api/(.*)", "destination": "/api/index.ts" }
   ]
 }

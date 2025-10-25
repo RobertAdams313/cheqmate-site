@@ -1,28 +1,23 @@
 {
   "name": "cheqmate-site",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "testApi": "bash scripts/test-api.sh"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/RobertAdams313/cheqmate-site.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/RobertAdams313/cheqmate-site/issues"
-  },
-  "homepage": "https://github.com/RobertAdams313/cheqmate-site#readme",
-  "dependencies": {
-    "@vercel/blob": "^2.0.0",
-    "plaid": "^39.0.0"
+    "dev": "tsx api/dev.ts",
+    "build": "vercel build",
+    "start": "tsx api/dev.ts",
+    "lint": "eslint .",
+    "format": "prettier -w .",
+    "typecheck": "tsc --noEmit",
+    "dev:vercel": "vercel dev --listen 3000"
   },
   "devDependencies": {
-    "@vercel/node": "^5.3.24"
+    "@types/node": "^20.19.23",
+    "eslint": "^9.11.0",
+    "prettier": "^3.3.3",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vercel": "^34.2.5"
   }
 }
