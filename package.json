@@ -5,12 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "tsx api/dev.ts",
-    "build": "vercel build",
+    "build": "tsc -p tsconfig.json",
     "start": "tsx api/dev.ts",
     "lint": "eslint .",
     "format": "prettier -w .",
-    "typecheck": "tsc --noEmit",
-    "dev:vercel": "vercel dev --listen 3000"
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^20.19.23",
