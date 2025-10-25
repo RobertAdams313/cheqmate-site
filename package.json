@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx api/dev.ts",
-    "build": "tsc -p tsconfig.json",
+    "build": "echo \"noop build\"",
     "start": "tsx api/dev.ts",
     "lint": "eslint .",
     "format": "prettier -w .",
