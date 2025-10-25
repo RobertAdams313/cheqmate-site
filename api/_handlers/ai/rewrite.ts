@@ -9,20 +9,17 @@ function bad(res: VercelResponse, code: number, msg: string) {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    // Method guard
     if (req.method !== 'POST') {
       res.setHeader('Allow', 'POST');
       return bad(res, 405, 'Method Not Allowed');
     }
 
-    // Auth (require any Bearer token you issue to the app)
     const auth = req.headers['authorization'];
     if (!auth || !auth.toString().startsWith('Bearer ')) {
       return bad(res, 401, 'Missing or invalid Authorization header');
     }
-    // TODO: Optionally verify token value here.
+    // TODO: Verify the bearer against your auth if desired.
 
-    // Parse body (handle string vs object)
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
     if (!body || !Array.isArray(body.items)) {
       return bad(res, 400, 'Body must be {"items":[{"index":number,"current":string}]}');
@@ -33,19 +30,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       current: String(i?.current ?? ''),
       title: i?.title ? String(i.title) : undefined,
     }));
-
-    // Quick input validation
     if (items.some(i => !Number.isFinite(i.index) || !i.current)) {
       return bad(res, 400, 'Each item requires numeric "index" and non-empty "current"');
     }
 
     const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      // Don’t throw—return a clear server misconfig message.
-      return bad(res, 500, 'Server missing OPENAI_API_KEY');
-    }
+    if (!apiKey) return bad(res, 500, 'Server missing OPENAI_API_KEY');
 
-    // Compose prompt for a *batched* JSON-only rewrite
     const system = [
       'You rewrite short financial tips as one concise, actionable sentence (8–140 chars).',
       'No emojis, no personal data, no moralizing, no multi-step plans.',
@@ -73,34 +64,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const resp = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
       body: JSON.stringify(bodyReq),
     });
 
     const text = await resp.text();
-    if (!resp.ok) {
-      // Surface upstream error text for faster debugging
-      return bad(res, resp.status, `OpenAI error: ${text.slice(0, 500)}`);
-    }
+    if (!resp.ok) return bad(res, resp.status, `OpenAI error: ${text.slice(0, 500)}`);
 
-    type Choice = { message?: { content?: string } };
-    const parsed = JSON.parse(text) as { choices?: Choice[] };
+    const parsed = JSON.parse(text) as { choices?: { message?: { content?: string } }[] };
     const content = parsed.choices?.[0]?.message?.content ?? '';
     let modelJson: any;
-    try {
-      modelJson = JSON.parse(content);
-    } catch {
-      return bad(res, 502, 'Model did not return valid JSON content');
-    }
+    try { modelJson = JSON.parse(content); }
+    catch { return bad(res, 502, 'Model did not return valid JSON content'); }
 
     const outItems: OutItem[] = Array.isArray(modelJson.items)
       ? modelJson.items.map((x: any) => ({ index: Number(x?.index), rewritten: String(x?.rewritten ?? '') }))
       : [];
 
-    // Keep array length & indices consistent with input (fill-through)
     const byIdx = new Map(outItems.map(i => [i.index, i.rewritten]));
     const merged: OutItem[] = items.map(i => ({
       index: i.index,
@@ -108,7 +88,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }));
 
     return res.status(200).json({ items: merged });
-  } catch (err: any) {
+  } catch (err) {
     console.error('rewrite handler error', err);
     return bad(res, 500, 'Internal error');
   }
