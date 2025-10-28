@@ -1,0 +1,15 @@
+/**
+ * CheqMate Site — Next.js Config
+ * Minimal, API-compatible setup (App Router + AI + Plaid)
+ * - Ensures API routes run on Node (not static export)
+ * - Safe for Vercel builds (no custom webpack or edge issues)
+ */
+
+const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
+  // DO NOT enable static export; it disables API routes.
+  // output: 'export',
+};
+
+module.exports = nextConfig;

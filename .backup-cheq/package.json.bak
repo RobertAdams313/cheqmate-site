@@ -1,0 +1,23 @@
+{
+  "name": "cheqmate-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx api/dev.ts",
+    "build": "echo \"noop build\"",
+    "start": "tsx api/dev.ts",
+    "lint": "eslint .",
+    "format": "prettier -w .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.23",
+    "@vercel/node": "^5.5.0",
+    "eslint": "^9.11.0",
+    "prettier": "^3.3.3",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vercel": "^34.2.5"
+  }
+}

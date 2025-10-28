@@ -1,0 +1,3 @@
+{
+  "/api/exchange-public-token/route": "app/api/exchange-public-token/route.js"
+}
