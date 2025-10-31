@@ -22,7 +22,7 @@ export function plaidClient(): PlaidApi {
 
   if (!id || !sec) throw new Error(`Missing Plaid credentials for ${env}`);
 
-  // Pin Plaid API version explicitly to avoid drift.
+  // Pin Plaid API version (Plaid recommends pinning).
   const configuration = new Configuration({
     basePath: PlaidEnvironments[env],
     baseOptions: {
