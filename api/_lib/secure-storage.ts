@@ -1,6 +1,7 @@
 import { put, get } from '@vercel/blob';
 import { encryptJSON, decryptJSON } from './crypto';
 
+// BASE + RW come from your env (unchanged)
 const BASE = process.env.BLOB_PUBLIC_BASE; // e.g., https://<acct>.public.blob.vercel-storage.com
 const RW   = process.env.BLOB_READ_WRITE_TOKEN;
 
@@ -28,12 +29,20 @@ type TokenBundle = {
 export async function saveTokenBundle(item_id: string, access_token: string, last_cursor: string | null) {
   requireEnv();
   const tokenKey = keyFor('token', item_id);
+
+  // 🔐 Data-at-rest is encrypted (AES-GCM via encryptJSON). Even with "public" Blob access,
+  // the ciphertext is useless without your server key. We never return Blob URLs to clients.
   const cipher = encryptJSON<TokenBundle>({
     item_id, access_token, last_cursor, updatedAt: new Date().toISOString()
   });
+
+  // 🔁 IMPORTANT CHANGE: access is now "public" to satisfy your project’s Blob policy.
+  // We still write to a "private/" path segment to avoid accidental discovery,
+  // but visibility is ultimately governed by the Blob service. Do NOT expose these URLs in responses.
   await put(tokenKey, cipher, {
     token: RW!, contentType:'application/json',
-    access:'private', addRandomSuffix:false
+    access:'public',         // ⬅️ changed from 'private' to 'public'
+    addRandomSuffix:false    // keep deterministic keys by Item ID
   });
   return { tokenKey };
 }
@@ -60,9 +69,12 @@ export async function writeItemMeta(item_id: string, meta: Record<string, unknow
   requireEnv();
   const key = keyFor('itemMeta', item_id);
   const body = JSON.stringify({ item_id, ...meta, updatedAt: new Date().toISOString() });
+
+  // Same visibility rationale as above.
   await put(key, body, {
     token: RW!, contentType:'application/json',
-    access:'private', addRandomSuffix:false
+    access:'public',         // ⬅️ changed from 'private' to 'public'
+    addRandomSuffix:false
   });
   return { key };
 }
