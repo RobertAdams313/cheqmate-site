@@ -1,6 +1,8 @@
 import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
 
-function resolveEnv(): 'sandbox' | 'production' {
+type PlaidMode = 'sandbox' | 'production';
+
+function resolveEnv(): PlaidMode {
   const forced = (process.env.FORCE_PLAID_ENV || '').toLowerCase();
   if (forced === 'sandbox' || forced === 'production') return forced;
   const env = (process.env.PLAID_ENV || '').toLowerCase();
@@ -18,16 +20,16 @@ export function plaidClient(): PlaidApi {
     ? (process.env.PLAID_SECRET_SANDBOX || process.env.PLAID_SECRET)
     : (process.env.PLAID_SECRET_PROD    || process.env.PLAID_SECRET);
 
-  if (!id || !sec) {
-    throw new Error(`Missing Plaid credentials for ${env}`);
-  }
+  if (!id || !sec) throw new Error(`Missing Plaid credentials for ${env}`);
 
+  // Pin Plaid API version explicitly to avoid drift.
   const configuration = new Configuration({
     basePath: PlaidEnvironments[env],
     baseOptions: {
       headers: {
         'PLAID-CLIENT-ID': id,
         'PLAID-SECRET': sec,
+        'Plaid-Version': '2020-09-14',
       },
     },
   });
@@ -35,6 +37,6 @@ export function plaidClient(): PlaidApi {
   return new PlaidApi(configuration);
 }
 
-export function plaidEnv(): string {
+export function plaidEnv(): PlaidMode {
   return resolveEnv();
 }

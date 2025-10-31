@@ -1,6 +1,8 @@
 {
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.ts" },
-    { "source": "/plaid/return", "destination": "/api/index.ts" }
+  "routes": [
+    { "src": "^/plaid/return$", "dest": "/plaid-return.html" },
+
+    { "src": "^/api$", "dest": "/api/index.ts" },
+    { "src": "^/api/(.*)$", "dest": "/api/index.ts" }
   ]
 }

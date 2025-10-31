@@ -1,20 +1,34 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { plaidClient } from './plaid-env';
+import { readTokenBundle, updateCursor } from '../_lib/secure-storage';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    const access_token: string | undefined = req.body?.access_token;
-    const cursor: string | undefined = req.body?.cursor;
-    if (!access_token) {
-      return res.status(400).json({ error: 'access_token is required' });
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body ?? {});
+    const item_id: string | undefined = body?.item_id;
+    if (!item_id) return res.status(400).json({ error: 'item_id is required' });
+
+    const bundle = await readTokenBundle(item_id);
+    if (!bundle) return res.status(404).json({ error: 'TOKEN_BUNDLE_NOT_FOUND' });
+
+    const client = plaidClient();
+
+    const requestBody = {
+      access_token: bundle.access_token,
+      cursor: bundle.last_cursor || undefined,
+      options: undefined as any,
+    };
+
+    const sync = await client.transactionsSync(requestBody);
+    const { added, modified, removed, next_cursor, has_more } = sync.data;
+
+    // Persist the latest cursor
+    if (next_cursor && next_cursor !== bundle.last_cursor) {
+      await updateCursor(item_id, next_cursor);
     }
 
-    const requestBody = { access_token, cursor };
-
-    const plaidResponse = await plaidClient.transactionsSync(requestBody);
-    return res.status(200).json(plaidResponse.data);
+    return res.status(200).json({ added, modified, removed, next_cursor, has_more });
   } catch (e: any) {
-    // Surface Plaid error payload when available for easier debugging
     const payload = e?.response?.data ?? { error: 'internal_error' };
     console.error('[Plaid sync] error', payload);
     return res.status(500).json(payload);
