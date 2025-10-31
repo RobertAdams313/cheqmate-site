@@ -1,17 +1,20 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { plaidClient } from './plaid-env';
+import { plaidClient } from '../../_lib/plaid-env';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'METHOD_NOT_ALLOWED' });
+
   try {
-    const access_token: string | undefined = req.body?.access_token;
-    const start_date: string | undefined = req.body?.start_date;
-    const end_date: string | undefined = req.body?.end_date;
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body ?? {});
+    const access_token: string | undefined = body?.access_token;
+    const start_date: string | undefined = body?.start_date;
+    const end_date: string | undefined = body?.end_date;
 
     if (!access_token || !start_date || !end_date) {
-      return res
-        .status(400)
-        .json({ error: 'access_token, start_date, end_date are required' });
+      return res.status(400).json({ error: 'BAD_REQUEST', detail: 'access_token, start_date, end_date are required' });
     }
+
+    const client = plaidClient(); // ✅ instantiate client
 
     const requestBody = {
       access_token,
@@ -20,10 +23,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       options: { include_personal_finance_category: true },
     };
 
-    const plaidResponse = await plaidClient.transactionsGet(requestBody);
-    return res.status(200).json(plaidResponse.data);
+    const plaidResponse = await client.transactionsGet(requestBody);
+    return res.status(200).json({
+      transactions: plaidResponse.data.transactions,
+      request_id: plaidResponse.data.request_id,
+    });
   } catch (e: any) {
-    const payload = e?.response?.data ?? { error: 'internal_error' };
+    const payload = e?.response?.data ?? { error: 'GET_FAILED' };
     console.error('[Plaid get] error', payload);
     return res.status(500).json(payload);
   }
