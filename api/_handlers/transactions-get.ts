@@ -1,3 +1,4 @@
+// api/_handlers/transactions/get.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { plaidClient } from '../../_lib/plaid-env';
 
@@ -14,7 +15,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'BAD_REQUEST', detail: 'access_token, start_date, end_date are required' });
     }
 
-    const client = plaidClient(); // ✅ instantiate client
+    const client = plaidClient();
 
     const requestBody = {
       access_token,

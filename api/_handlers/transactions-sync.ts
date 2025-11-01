@@ -1,6 +1,7 @@
+// api/_handlers/transactions/sync.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { plaidClient } from '../../_lib/plaid-env';
-import { readTokenBundle, updateCursor } from '../../_lib/secure-storage';
+import { readTokenBundle, updateCursor } from '../_lib/secure-storage';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'METHOD_NOT_ALLOWED' });
@@ -19,8 +20,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       access_token: bundle.access_token,
       cursor: bundle.last_cursor || undefined,
       options: {
-        include_personal_finance_category: true, // ✅ optional, but helpful
-        // include_original_description: true,   // uncomment if you want this too
+        include_personal_finance_category: true,
       } as any,
     };
 

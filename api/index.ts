@@ -1,7 +1,8 @@
+// api/index.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-import linkToken from './_handlers/link-token';                 // keep your existing
-import exchangePublicToken from './_handlers/exchange-public-token'; // keep your existing
+import linkToken from './_handlers/link-token';
+import exchangePublicToken from './_handlers/exchange-public-token';
 import transactionsSync from './_handlers/transactions/sync';
 import transactionsGet from './_handlers/transactions/get';
 
@@ -29,9 +30,12 @@ function keyOf(req: VercelRequest) {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const key = keyOf(req);
   const h = routes[key];
-  if (!h) return res.status(404).json({ error: 'NOT_FOUND', path: key, known: Object.keys(routes) });
-  try { return await h(req, res); }
-  catch (e: any) {
+  if (!h) {
+    return res.status(404).json({ error: 'NOT_FOUND', path: key, known: Object.keys(routes) });
+  }
+  try {
+    return await h(req, res);
+  } catch (e: any) {
     console.error('router error:', e?.response?.data ?? e);
     return res.status(500).json({ error: 'INTERNAL', detail: e?.response?.data ?? String(e) });
   }
