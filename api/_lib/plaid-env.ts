@@ -1,6 +1,4 @@
 // api/_lib/plaid-env.ts
-// Runtime Plaid client factory + env resolver (version-pinned)
-
 import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
 
 type PlaidMode = 'sandbox' | 'production';
@@ -23,9 +21,7 @@ export function plaidClient(): PlaidApi {
     ? (process.env.PLAID_SECRET_SANDBOX || process.env.PLAID_SECRET)
     : (process.env.PLAID_SECRET_PROD    || process.env.PLAID_SECRET);
 
-  if (!id || !sec) {
-    throw new Error(`Missing Plaid credentials for ${env} (check Vercel env vars)`);
-  }
+  if (!id || !sec) throw new Error(`Missing Plaid credentials for ${env}`);
 
   const configuration = new Configuration({
     basePath: PlaidEnvironments[env],
@@ -33,7 +29,7 @@ export function plaidClient(): PlaidApi {
       headers: {
         'PLAID-CLIENT-ID': id,
         'PLAID-SECRET': sec,
-        // Pin Plaid API version to avoid drift.
+        // Pin Plaid API date to avoid drift
         'Plaid-Version': '2020-09-14',
       },
     },

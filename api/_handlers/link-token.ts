@@ -1,58 +1,55 @@
-// api/_handlers/link-token.ts
+// api/index.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { CountryCode, Products } from 'plaid';
-import { plaidClient, plaidEnv } from '../../_lib/plaid-env';
-import { readTokenBundle } from '../_lib/secure-storage';
 
-const redirectUri = process.env.PLAID_REDIRECT_URI || undefined;
-const webhookUrl  = process.env.PLAID_WEBHOOK_URL || undefined;
+type H = (req: VercelRequest, res: VercelResponse) => Promise<any> | any;
+
+// Route table → module path (loaded lazily)
+const routes: Record<string, string> = {
+  // Plaid
+  'POST /api/link-token': './_handlers/link-token',
+  'POST /api/exchange-public-token': './_handlers/exchange-public-token',
+
+  // Sync (nested + kebab)
+  'POST /api/transactions/sync': './_handlers/transactions/sync',
+  'POST /api/transactions-sync': './_handlers/transactions/sync',
+
+  // Get (nested + kebab)
+  'POST /api/transactions/get': './_handlers/transactions/get',
+  'POST /api/transactions-get': './_handlers/transactions/get',
+
+  // Debug
+  'GET /api/_self-test': './_handlers/_self-test',
+  'GET /api/_env-check': './_handlers/_env-check',
+};
+
+function keyOf(req: VercelRequest) {
+  const method = (req.method || 'GET').toUpperCase();
+  const path = (req.url || '/').split('?')[0];
+  return `${method} ${path}`;
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'METHOD_NOT_ALLOWED' });
+  const key = keyOf(req);
+  const modPath = routes[key];
+
+  if (!modPath) {
+    return res.status(404).json({ error: 'NOT_FOUND', path: key, known: Object.keys(routes) });
+  }
 
   try {
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body ?? {});
-    const flow: 'add' | 'update' = body.flow === 'update' ? 'update' : 'add';
-    const item_id: string | undefined = body.item_id;
-    const client_user_id: string =
-      (body.client_user_id && String(body.client_user_id)) || `cheqmate-ios-${Date.now()}`;
-
-    const client = plaidClient();
-    const env = plaidEnv();
-
-    const base = {
-      client_name: 'CheqMate',
-      language: 'en',
-      country_codes: [CountryCode.Us],
-      user: { client_user_id },
-      ...(redirectUri ? { redirect_uri: redirectUri } : {}),
-      ...(webhookUrl  ? { webhook: webhookUrl } : {}),
-    } as const;
-
-    if (flow === 'update') {
-      if (!item_id) return res.status(400).json({ error: 'MISSING_ITEM_ID' });
-      const bundle = await readTokenBundle(item_id);
-      if (!bundle?.access_token) return res.status(404).json({ error: 'NO_TOKEN_FOR_ITEM' });
-
-      const { data } = await client.linkTokenCreate({
-        ...base,
-        access_token: bundle.access_token,
-      } as any);
-
-      return res.status(200).json({ link_token: data.link_token, flow: 'update', env });
+    const mod = await import(modPath).catch((e: any) => {
+      console.error('[router] import failed:', modPath, e?.stack || e);
+      throw { status: 500, payload: { error: 'IMPORT_FAILED', module: modPath, detail: String(e) } };
+    });
+    const h: H | undefined = mod?.default;
+    if (!h) {
+      throw { status: 500, payload: { error: 'NO_DEFAULT_EXPORT', module: modPath } };
     }
-
-    // default: add
-    const { data } = await client.linkTokenCreate({
-      ...base,
-      products: [Products.Transactions],
-    } as any);
-
-    return res.status(200).json({ link_token: data.link_token, flow: 'add', env });
+    return await h(req, res);
   } catch (err: any) {
-    const status = err?.response?.status ?? 500;
-    const detail = err?.response?.data ?? { message: String(err) };
-    console.error('[link-token] error:', detail);
-    return res.status(status).json({ error: 'LINK_TOKEN_CREATE_FAILED', detail });
+    const status = err?.status ?? 500;
+    const payload = err?.payload ?? { error: 'INTERNAL', detail: String(err) };
+    console.error('[router] handler error:', key, payload);
+    return res.status(status).json(payload);
   }
 }
